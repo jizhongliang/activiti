@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <resourceExtensions />
+    <wildcardResourcePatterns>
+      <entry name="!?*.java" />
+      <entry name="!?*.form" />
+      <entry name="!?*.class" />
+      <entry name="!?*.groovy" />
+      <entry name="!?*.scala" />
+      <entry name="!?*.flex" />
+      <entry name="!?*.kt" />
+      <entry name="!?*.clj" />
+      <entry name="!?*.aj" />
+    </wildcardResourcePatterns>
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="false">
+        <processorPath useClasspath="true" />
+      </profile>
+      <profile default="false" name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="frame-activiti" />
+        <module name="frame-admin" />
+        <module name="frame-app" />
+        <module name="frame-casServer" />
+        <module name="frame-common" />
+        <module name="frame-generator" />
+        <module name="frame-quartz" />
+        <module name="frame-redis" />
+        <module name="frame-service" />
+        <module name="frame-shiro" />
+        <module name="frame-solr" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="frame-activiti" target="1.8" />
+      <module name="frame-admin" target="1.8" />
+      <module name="frame-app" target="1.8" />
+      <module name="frame-casServer" target="1.7" />
+      <module name="frame-common" target="1.8" />
+      <module name="frame-generator" target="1.8" />
+      <module name="frame-quartz" target="1.8" />
+      <module name="frame-redis" target="1.8" />
+      <module name="frame-service" target="1.8" />
+      <module name="frame-shiro" target="1.8" />
+      <module name="frame-solr" target="1.8" />
+      <module name="misFrame" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hxy.sys.dao.SpGuarantyDao">
+
+
+    <resultMap type="com.hxy.sys.entity.SpGuarantyEntity" id="spGuarantyMap">
+        <result property="id" column="id"/>
+        <result property="userName" column="user_name"/>
+        <result property="creditId" column="credit_id"/>
+        <result property="parkAddress" column="park_address"/>
+        <result property="parkArea" column="park_area"/>
+        <result property="guarantyType" column="guaranty_type"/>
+        <result property="price" column="price"/>
+        <result property="gprice" column="gprice"/>
+        <result property="parkNo" column="park_no"/>
+        <result property="hisPowerNo" column="his_power_no"/>
+        <result property="addName" column="add_name"/>
+        <result property="addDepart" column="add_depart"/>
+        <result property="updateName" column="update_name"/>
+        <result property="state" column="state"/>
+        <result property="addTime" column="add_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+		id, 
+		user_name, 
+		credit_id, 
+		park_address, 
+		park_area, 
+		guaranty_type, 
+		price, 
+		gprice, 
+		park_no, 
+		his_power_no, 
+		add_name, 
+		add_depart, 
+		update_name, 
+		state, 
+		add_time, 
+		update_time
+    </sql>
+
+	<select id="queryObject" resultType="com.hxy.sys.entity.SpGuarantyEntity" resultMap="spGuarantyMap">
+		select
+		<include refid="Base_Column_List" />
+		from sp_guaranty
+		where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.hxy.sys.entity.SpGuarantyEntity" resultMap="spGuarantyMap">
+		select
+		<include refid="Base_Column_List" />
+		from sp_guaranty
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+    <select id="queryListByBean" resultType="com.hxy.sys.entity.SpGuarantyEntity" resultMap="spGuarantyMap">
+        select
+        <include refid="Base_Column_List" />
+        from sp_guaranty
+        WHERE 1=1
+    </select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from sp_guaranty
+	</select>
+	 
+	<insert id="save" parameterType="com.hxy.sys.entity.SpGuarantyEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into sp_guaranty
+		(
+			`user_name`, 
+			`credit_id`, 
+			`park_address`, 
+			`park_area`, 
+			`guaranty_type`, 
+			`price`, 
+			`gprice`, 
+			`park_no`, 
+			`his_power_no`, 
+			`add_name`, 
+			`add_depart`, 
+			`update_name`, 
+			`state`, 
+			`add_time`, 
+			`update_time`
+		)
+		values
+		(
+			#{userName}, 
+			#{creditId}, 
+			#{parkAddress}, 
+			#{parkArea}, 
+			#{guarantyType}, 
+			#{price}, 
+			#{gprice}, 
+			#{parkNo}, 
+			#{hisPowerNo}, 
+			#{addName}, 
+			#{addDepart}, 
+			#{updateName}, 
+			#{state}, 
+			#{addTime}, 
+			#{updateTime}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.hxy.sys.entity.SpGuarantyEntity">
+		update sp_guaranty 
+		<set>
+			<if test="userName != null">`user_name` = #{userName}, </if>
+			<if test="creditId != null">`credit_id` = #{creditId}, </if>
+			<if test="parkAddress != null">`park_address` = #{parkAddress}, </if>
+			<if test="parkArea != null">`park_area` = #{parkArea}, </if>
+			<if test="guarantyType != null">`guaranty_type` = #{guarantyType}, </if>
+			<if test="price != null">`price` = #{price}, </if>
+			<if test="gprice != null">`gprice` = #{gprice}, </if>
+			<if test="parkNo != null">`park_no` = #{parkNo}, </if>
+			<if test="hisPowerNo != null">`his_power_no` = #{hisPowerNo}, </if>
+			<if test="addName != null">`add_name` = #{addName}, </if>
+			<if test="addDepart != null">`add_depart` = #{addDepart}, </if>
+			<if test="updateName != null">`update_name` = #{updateName}, </if>
+			<if test="state != null">`state` = #{state}, </if>
+			<if test="addTime != null">`add_time` = #{addTime}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from sp_guaranty where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from sp_guaranty where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

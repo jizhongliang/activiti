@@ -1,0 +1,9 @@
+com/hxy/demo/service/impl/SolrArticleServiceImpl.class
+com/hxy/solr/entity/SolrTest.class
+com/hxy/solr/utils/SolrClientFactory.class
+com/hxy/solr/utils/SolrUtils.class
+com/hxy/sys/service/SolrArticleService.class
+com/hxy/demo/entity/SolrArticleEntity.class
+com/hxy/solr/entity/HightQueryParams.class
+com/hxy/demo/controller/ArticleController.class
+com/hxy/demo/dao/SolrArticleDao.class

@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hxy.sys.dao.SpCreditDao">
+
+
+    <resultMap type="com.hxy.sys.entity.SpCreditEntity" id="spCreditMap">
+        <result property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="contractNum" column="contract_num"/>
+        <result property="villageId" column="village_id"/>
+        <result property="addId" column="add_id"/>
+        <result property="credit" column="credit"/>
+        <result property="rate" column="rate"/>
+        <result property="declareTime" column="declare_time"/>
+        <result property="declareCompany" column="declare_company"/>
+        <result property="declarePeople" column="declare_people"/>
+        <result property="serviceType" column="service_type"/>
+        <result property="serviceVariety" column="service_variety"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="status" column="status"/>
+        <result property="startTime" column="start_time"/>
+        <result property="instanceId" column="instance_id"/>
+        <result property="defid" column="defid"/>
+        <result property="startUserId" column="start_user_id"/>
+        <result property="actResult" column="act_result"/>
+        <result property="xlz" column="xlz"/>
+        <result property="addTime" column="add_time"/>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+		id, 
+		user_id, 
+		contract_num, 
+		village_id, 
+		add_id, 
+		credit, 
+		rate, 
+		declare_time, 
+		declare_company, 
+		declare_people, 
+		service_type, 
+		service_variety, 
+		update_time, 
+		status, 
+		start_time, 
+		instance_id, 
+		defid, 
+		start_user_id, 
+		act_result,
+		xlz,
+		add_time
+    </sql>
+
+	<select id="queryObject" resultType="com.hxy.sys.entity.SpCreditEntity" resultMap="spCreditMap">
+		select
+		<include refid="Base_Column_List" />
+		from sp_credit
+		where id = #{value}
+	</select>
+	<select id="queryXlz" resultType="com.hxy.sys.entity.SpCreditEntity" resultMap="spCreditMap">
+		select
+		<include refid="Base_Column_List" />
+		from sp_credit
+	  <trim prefix="where" prefixOverrides="and|or">
+		<if test="time != null">
+            	<![CDATA[ AND DATE_FORMAT(add_time, '%Y-%m')=
+            	 DATE_FORMAT(#{time,jdbcType=TIMESTAMP},'%Y-%m')]]>
+        </if>
+      </trim>
+         order by xlz DESC limit 1
+	</select>
+
+	<select id="queryList" resultType="com.hxy.sys.entity.SpCreditEntity" resultMap="spCreditMap">
+		select
+		<include refid="Base_Column_List" />
+		from sp_credit
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+    <select id="queryListByBean" resultType="com.hxy.sys.entity.SpCreditEntity" resultMap="spCreditMap">
+        select
+        <include refid="Base_Column_List" />
+        from sp_credit
+        WHERE 1=1
+    </select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from sp_credit
+	</select>
+	 
+	<insert id="save" parameterType="com.hxy.sys.entity.SpCreditEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into sp_credit
+		(
+			`user_id`, 
+			`contract_num`, 
+			`village_id`, 
+			`add_id`, 
+			`credit`, 
+			`rate`, 
+			`declare_time`, 
+			`declare_company`, 
+			`declare_people`, 
+			`service_type`, 
+			`service_variety`, 
+			`update_time`, 
+			`status`, 
+			`start_time`, 
+			`instance_id`, 
+			`defid`, 
+			`start_user_id`, 
+			`act_result`,
+			`add_time`,
+			`xlz`
+		)
+		values
+		(
+			#{userId}, 
+			#{contractNum}, 
+			#{villageId}, 
+			#{addId}, 
+			#{credit}, 
+			#{rate}, 
+			#{declareTime}, 
+			#{declareCompany}, 
+			#{declarePeople}, 
+			#{serviceType}, 
+			#{serviceVariety}, 
+			#{updateTime}, 
+			#{status}, 
+			#{startTime}, 
+			#{instanceId}, 
+			#{defid}, 
+			#{startUserId}, 
+			#{actResult},
+			#{addTime},
+			#{xlz}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.hxy.sys.entity.SpCreditEntity">
+		update sp_credit 
+		<set>
+			<if test="userId != null">`user_id` = #{userId}, </if>
+			<if test="contractNum != null">`contract_num` = #{contractNum}, </if>
+			<if test="villageId != null">`village_id` = #{villageId}, </if>
+			<if test="addId != null">`add_id` = #{addId}, </if>
+			<if test="credit != null">`credit` = #{credit}, </if>
+			<if test="rate != null">`rate` = #{rate}, </if>
+			<if test="declareTime != null">`declare_time` = #{declareTime}, </if>
+			<if test="declareCompany != null">`declare_company` = #{declareCompany}, </if>
+			<if test="declarePeople != null">`declare_people` = #{declarePeople}, </if>
+			<if test="serviceType != null">`service_type` = #{serviceType}, </if>
+			<if test="serviceVariety != null">`service_variety` = #{serviceVariety}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="startTime != null">`start_time` = #{startTime}, </if>
+			<if test="instanceId != null">`instance_id` = #{instanceId}, </if>
+			<if test="defid != null">`defid` = #{defid}, </if>
+			<if test="startUserId != null">`start_user_id` = #{startUserId}, </if>
+			<if test="actResult != null">`act_result` = #{actResult}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from sp_credit where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from sp_credit where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

@@ -1,0 +1,129 @@
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context" xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+     http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd
+     http://www.springframework.org/schema/util
+     http://www.springframework.org/schema/util/spring-util-3.0.xsd"
+       default-lazy-init="true">
+<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+    <property name="securityManager" ref="securityManager" />
+    <!-- 设定角色的登录链接，这里为cas登录页面的链接可配置回调地址 -->
+    <property name="loginUrl" value="${cas.server}/login?service=${cas.client}/login/" />
+    <property name="successUrl" value="${cas.client}/index1.html"></property>
+    <property name="filters">
+        <util:map>
+            <entry key="casFilter" value-ref="casFilter" />
+            <entry key="logout" value-ref="logout" />
+            <entry key="singleSignOutFilter" value-ref="singleSignOutFilter"/>
+            <!--<entry key="user" value-ref="userAuthorizationFilter" />-->
+        </util:map>
+    </property>
+    <property name="filterChainDefinitions">
+        <value>
+            /login/=casFilter
+            /logout =singleSignOutFilter,logout
+            /statics/**=anon
+            /login/fail=anon
+            /loginFail.html=anon
+            /app/**=anon
+            /service/**=anon
+            /js/**=anon
+            /swagger/**=anon
+            /**=authc
+        </value>
+    </property>
+</bean>
+<bean name="singleSignOutFilter" class="com.hxy.shiro.filter.SingleSignOutFilter" />
+<!--<bean id="userAuthorizationFilter"  class="com.hxy.shiro.filter.UserAuthorizationFilter"/>-->
+<!-- shiro-cas登录过滤器 -->
+<bean id="casFilter" class="org.apache.shiro.cas.CasFilter">
+    <!-- 配置验证错误时的失败页面 ，这里配置为登录页面 -->
+    <property name="failureUrl" value="${cas.server}?service=${cas.client}/loginFail.html" />
+</bean>
+<!-- 退出登录过滤器 -->
+<bean id="logout" class="org.apache.shiro.web.filter.authc.LogoutFilter">
+    <property name="redirectUrl" value="${cas.server}/logout?service=${cas.server}/login?service=${cas.client}/index1.html" />
+</bean>
+
+<!-- 自定义casRealm -->
+<bean id="casRealm" class="com.hxy.shiro.realm.MyCasRealm">
+    <!-- <property name="defaultRoles" value="ROLE_USER" /> -->
+    <!-- 配置cas服务器地址 -->
+    <property name="casServerUrlPrefix" value="${cas.server}/" />
+    <!-- 客户端的回调地址设置，必须和上面的shiro-cas过滤器casFilter拦截的地址一致 否则服务器会判断service不匹配 -->
+    <property name="casService" value="${cas.client}/login/" />
+</bean>
+
+<!-- 用户授权信息Cache, 采用EhCache，本地缓存最长时间应比redis中央缓存时间短一些，以确保Session中doReadSession方法调用时更新中央缓存过期时间 -->
+<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+    <property name="configLocation" value="classpath:ehcache.xml"/>
+</bean>
+
+<!--缓存机制 -->
+<bean id="shiroCacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
+    <property name="cacheManager" ref="cacheManager" />
+</bean>
+
+<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+    <property name="realm" ref="casRealm" />
+    <property name="subjectFactory" ref="casSubjectFactory" />
+    <property name="cacheManager" ref="shiroCacheManager" />
+    <!-- 注入会话管理器    进行交互-->
+    <property name="sessionManager" ref="sessionManager"></property>
+</bean>
+
+<!-- 会话管理器使用用于web 环境的DefaultWebSessionManager -->
+<bean id="sessionManager" class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+    <!-- 设置全局会话超时时间，默认30分钟(1800000) -->
+    <property name="globalSessionTimeout" value="1800000"/>
+    <!-- 是否在会话过期后会调用SessionDAO的delete方法删除会话 默认true-->
+    <property name="deleteInvalidSessions" value="false"/>
+    <!-- 是否开启会话验证器任务 默认true -->
+    <property name="sessionValidationSchedulerEnabled" value="false"/>
+    <!-- 会话验证器调度时间 -->
+    <property name="sessionValidationInterval" value="1800000"/>
+    <property name="sessionDAO" ref="sessionDao"/>
+    <property name="sessionIdCookieEnabled" value="true"/>
+    <property name="sessionIdCookie" ref="sessionIdCookie"/>
+    <property name="sessionListeners">
+        <list>
+            <ref bean="shiroSessionListener"/>
+        </list>
+    </property>
+</bean>
+
+<bean id="shiroSessionListener" class="com.hxy.shiro.redisSession.ShiroSessionListener"/>
+
+<!-- 自定义缓存Dao，添加标识位，减少doUpdate方法中Redis的连接次数来减轻redis网络压力 -->
+<bean id="sessionDao" class="com.hxy.shiro.redisSession.CachingShiroSessionDao">
+    <!--sessionId前缀-->
+    <property name="prefix" value="shiro-session:"/>
+    <!-- 注意中央缓存有效时间要比本地缓存有效时间长-->
+    <property name="seconds" value="1800"/>
+</bean>
+
+<!-- 会话Cookie 模板 sessionIdCookie是用于生产Session ID Cookie 的模板；-->
+<bean id="sessionIdCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
+    <!--cookie的name -->
+    <constructor-arg value="sid"/>
+    <property name="httpOnly" value="true"/>
+    <!--maxAge=-1 表示浏览器关闭时失效此Cookie-->
+    <property name="maxAge" value="-1"/>
+    <!-- 配置存储Session Cookie的domain为 一级域名
+    <property name="domain" value=".sojson.com"/>
+    -->
+</bean>
+
+<!-- 如果要实现cas的remember me的功能，需要用到下面这个bean，并设置到securityManager的subjectFactory中 -->
+<bean id="casSubjectFactory" class="org.apache.shiro.cas.CasSubjectFactory" />
+
+<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
+
+<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="staticMethod" value="org.apache.shiro.SecurityUtils.setSecurityManager" />
+    <property name="arguments" ref="securityManager" />
+</bean>
+</beans>

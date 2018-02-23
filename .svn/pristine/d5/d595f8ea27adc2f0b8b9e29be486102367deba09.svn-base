@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hxy.sys.dao.SpCreditRereqDao">
+
+
+    <resultMap type="com.hxy.sys.entity.SpCreditRereqEntity" id="spCreditRereqMap">
+        <result property="id" column="id"/>
+        <result property="creditId" column="credit_id"/>
+        <result property="type" column="type"/>
+        <result property="addTime" column="add_time"/>
+        <result property="name" column="name"/>
+        <result property="villageId" column="village_id"/>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+		id, 
+		credit_id, 
+		type, 
+		add_time, 
+		name, 
+		village_id
+    </sql>
+
+	<select id="queryObject" resultType="com.hxy.sys.entity.SpCreditRereqEntity" resultMap="spCreditRereqMap">
+		select
+		<include refid="Base_Column_List" />
+		from sp_credit_rereq
+		where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.hxy.sys.entity.SpCreditRereqEntity" resultMap="spCreditRereqMap">
+		select
+		<include refid="Base_Column_List" />
+		from sp_credit_rereq
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+    <select id="queryListByBean" resultType="com.hxy.sys.entity.SpCreditRereqEntity" resultMap="spCreditRereqMap">
+        select
+        <include refid="Base_Column_List" />
+        from sp_credit_rereq
+        WHERE 1=1
+    </select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from sp_credit_rereq
+	</select>
+	 
+	<insert id="save" parameterType="com.hxy.sys.entity.SpCreditRereqEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into sp_credit_rereq
+		(
+			`credit_id`, 
+			`type`, 
+			`add_time`, 
+			`name`, 
+			`village_id`
+		)
+		values
+		(
+			#{creditId}, 
+			#{type}, 
+			#{addTime}, 
+			#{name}, 
+			#{villageId}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.hxy.sys.entity.SpCreditRereqEntity">
+		update sp_credit_rereq 
+		<set>
+			<if test="creditId != null">`credit_id` = #{creditId}, </if>
+			<if test="type != null">`type` = #{type}, </if>
+			<if test="addTime != null">`add_time` = #{addTime}, </if>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="villageId != null">`village_id` = #{villageId}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from sp_credit_rereq where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from sp_credit_rereq where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

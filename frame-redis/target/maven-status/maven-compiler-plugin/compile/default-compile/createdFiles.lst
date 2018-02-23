@@ -1,0 +1,4 @@
+com/hxy/sentinelRedis/SetSentinel.class
+com/hxy/sentinelRedis/RedisSentinelConfigurationCustom.class
+com/hxy/sentinelRedis/JedisSentinelPoolCustom.class
+com/hxy/utils/RedisUtil.class

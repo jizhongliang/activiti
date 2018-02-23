@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>担保人管理</title>
+#parse("sys/header.html")
+	<link rel="stylesheet" href="${rc.contextPath}/statics/plugins/bootstrap-datetimepicker-0.0.11/css/bootstrap-combined.min.css">
+	<style type="text/css">
+		.form-control {
+			display: inline-block;
+			width: 190px;
+			height: 32px;
+		}
+		.layui-form-label{
+			display: inline-block;
+			float: initial;
+			width: 120px;
+			cursor: default;
+		}
+		.grid-btn{
+			margin: 10px;
+			white-space: nowrap;
+			cursor: default;
+		}
+	</style></head>
+<body>
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+		<div class="panel panel-default panel-div">
+			<div class="panel-heading">筛选查询</div>
+			<div class="grid-btn">
+				<label class="layui-form-label" style="width:6%;">客户名称:</label>
+				<input type="text" class="form-control" style="height: 32px;width:190px"v-model="q.userName" @keyup.enter="query" placeholder="客户名称">
+				<label class="layui-form-label" style="width:6%;">主合同号:</label>
+				<input type="text" class="form-control" style="height: 32px;width:190px"v-model="q.contractNum" @keyup.enter="query" placeholder="主合同号">
+
+				<label class="layui-form-label" style="width:6%;">登记公司:</label>
+				<select  id="orgName" class="form-control input-400" v-model="q.orgName" placeholder="登记公司" onchange="changeBap()" >
+				</select>
+
+				<label  class="layui-form-label" style="width:6%;">登记部门:</label>
+				<select id="bapName" class="form-control input-400" v-model="q.bapName" placeholder="登记部门" >
+				</select>
+				<label class="layui-form-label" style="width:6%;">登记人:</label>
+				<input type="text" class="form-control" style="height: 32px;width:190px"v-model="q.sysUserName" @keyup.enter="query" placeholder="登记人">
+
+			</div>
+
+
+			<div class="grid-btn">
+				<label class="layui-form-label" style="width:6%;">担保状态:</label>
+				<select id="state" class="form-control input-400" v-model="q.state" placeholder="担保状态">
+					<option value="23">担保状态</option>
+				</select>
+				<label class="layui-form-label" style="width:6%;">登记开始时间:</label>
+				<span id="datetimepicker" class="input-append date inline-div">
+				<input id="dataInput" type="text" class="form-control" style="height: 32px;width:162px" placeholder="登记开始时间"/>
+				<span class="add-on" style="height: 32px;"><i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                     </span>
+			</span>
+				<label class="layui-form-label" style="width:6%;">登记结束时间:</label>
+				<span id="datetimepicker1" class="input-append date inline-div">
+				<input id="dataInput1" type="text" class="form-control" style="height: 32px;width:162px" placeholder="登记结束时间"/>
+				<span class="add-on" style="height: 32px;">
+                     <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+					</span>
+			</span>
+				<label class="layui-form-label" style="width:6%;">&nbsp;</label>
+				<button class="layui-btn" id="searchSubmit"  @click="query"><i class="layui-icon">&#xe615;</i>查 询</button>
+				#if($shiro.hasPermission("spbond:save"))
+				<button class="layui-btn" @click="add" type="button"><i class="layui-icon">&#xe61f;</i> 新 增</button>
+				#end
+			</div>
+		</div>
+		<div class="panel panel-default panel-div">
+			<div class="panel-heading">数据列表</div>
+			<table id="jqGrid" ></table>
+			<div id="jqGridPager"></div>
+		</div>
+    </div>
+    
+    <div v-show="!showList" class="panel panel-default">
+		<div class="panel-heading">{{title}}</div>
+		<form class="form-horizontal">
+											<div class="form-group">
+			   	<div class="col-sm-2 control-label">客户名称</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="spBond.userName" placeholder="客户名称"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">合同号</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="spBond.contractNum" placeholder="合同号"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">保证人姓名</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="spBond.bondName" placeholder="保证人姓名"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">保证人手机号码</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="spBond.bondPhone" placeholder="保证人手机号码"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">保证人身份证号码</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="spBond.bondIdNo" placeholder="保证人身份证号码"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">担保人状态:0:失效,1:正常</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="spBond.bondState" placeholder="担保人状态:0:失效,1:正常"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">担保人新增人</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="spBond.bondAddName" placeholder="担保人新增人"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">担保人更新人</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="spBond.bondUpdateName" placeholder="担保人更新人"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">担保人增加机构</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="spBond.bondAddDepart" placeholder="担保人增加机构"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">添加时间</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="spBond.addTime" placeholder="添加时间"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">修改时间</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="spBond.updateTime" placeholder="修改时间"/>
+			    </div>
+			</div>
+							<div class="form-group">
+				<div class="col-sm-2 control-label"></div>
+                <button class="layui-btn" type="button" @click="saveOrUpdate" >保存</button>
+                <button class="layui-btn layui-btn-warm" type="button" @click="reload" style="margin-left: 30px">返回</button>
+			</div>
+		</form>
+	</div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $('#datetimepicker').datetimepicker({
+            language:  'zh-CN',
+            format: 'yyyy-MM-dd hh:mm:ss',
+        });
+        $('#datetimepicker1').datetimepicker({
+            language:  'zh-CN',
+            format: 'yyyy-MM-dd hh:mm:ss',
+        });
+
+        $.ajax({
+            type: "POST",
+            url: '../sys/organ/orgList',
+            data: JSON.stringify({
+                type:1
+            }),
+            success: function(data){
+                if(data.code == 0){
+                    finishAddress(data.data,'orgName');
+                }else{
+                    alert(data.msg);
+                }
+            }
+        });
+
+        $.ajax({
+            type: "POST",
+            url: '../sys/organ/orgList',
+            data: JSON.stringify({
+                type:2,
+                bapid:$("#orgName").val()
+            }),
+            success: function(data){
+                if(data.code == 0){
+                    finishAddress(data.data,'bapName');
+                }else{
+                    alert(data.msg);
+                }
+            }
+        });
+
+    })
+    function changeBap() {
+        $.ajax({
+            type: "POST",
+            url: '../sys/organ/orgList',
+            data: JSON.stringify({
+                type:2,
+                bapid:$("#orgName").val()
+            }),
+            success: function(data){
+                if(data.code == 0){
+                    finishAddress(data.data,'bapName');
+                }else{
+                    alert(data.msg);
+                }
+            }
+        });
+    }
+    function finishAddress(data,id){
+        /*var defaultOption=$("#"+id).find("option").eq(0);*/
+        $("#"+id).empty();
+        $("#"+id).append('<option value="">'+'请选择'+'</option>');
+        for(var i=0;i<data.length;i++){
+            $("#"+id).append('<option value="'+data[i].id+'">'+data[i].name+'</option>');
+        }
+    }
+
+</script>
+<script src="${rc.contextPath}/statics/js/collateral/spbond.js?_${date.systemTime}"></script>
+</body>
+</html>

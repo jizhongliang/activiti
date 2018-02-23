@@ -1,0 +1,43 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>选择客户</title>
+	    <%@include file="/common/commonCSS.jsp" %>
+	    <%@include file="/common/commonJS.jsp" %>
+		<%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+	</head>
+	<body>
+		<div id="main-container">
+			<div class="row form-content">
+				<div class="col-xs-12">
+				<div class="layui-form-item col-xs-12" style="margin-top: 20px">
+				           <select class="form-control input-400" placeholder="请选择客户" id="xuanze">
+                                <option value="">请选择客户</option>
+                                 <c:forEach items="${list}" var="prd">
+                                  <option value="${prd.id}">
+							           ${prd.phone}--${prd.name}
+							        </option>
+							    </c:forEach>
+                            </select>
+				</div>
+						 <!-- <div class="layui-form-item" style="margin-top: 40px">
+							<div class="layui-input-block">
+								<button class="layui-btn" type="button" id="submitBtn">确认</button>
+								<button class="layui-btn layui-btn-primary" type="button" onclick="closeThisWindow()">关 闭</button>
+							</div>
+						</div>  --> 				
+				</div>
+			</div>
+		</div>
+	</body>
+	
+	<script type="text/javascript">
+        var callbackdata = function () {
+            var data = {
+            	xuanze: $("#xuanze").val()
+            };
+            return data;
+        }
+    </script>
+</html>

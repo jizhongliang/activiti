@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hxy.sys.dao.SpCreditGuarantyDao">
+
+
+    <resultMap type="com.hxy.sys.entity.SpCreditGuarantyEntity" id="spCreditGuarantyMap">
+        <result property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="creditId" column="credit_id"/>
+        <result property="villageId" column="village_id"/>
+        <result property="parkAddress" column="park_address"/>
+        <result property="parkArea" column="park_area"/>
+        <result property="parkOldPrice" column="park_old_price"/>
+        <result property="price" column="price"/>
+        <result property="gprice" column="gprice"/>
+        <result property="parkPrice" column="park_price"/>
+        <result property="isCard" column="is_card"/>
+        <result property="parkUsage" column="park_usage"/>
+        <result property="parkNo" column="park_no"/>
+        <result property="houseNo" column="house_no"/>
+        <result property="landNo" column="land_no"/>
+        <result property="estateNo" column="estate_no"/>
+        <result property="parkTransferNo" column="park_transfer_no"/>
+        <result property="hisPowerNo" column="his_power_no"/>
+        <result property="addName" column="add_name"/>
+        <result property="addDepart" column="add_depart"/>
+        <result property="updateName" column="update_name"/>
+        <result property="state" column="state"/>
+        <result property="addTime" column="add_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+		id, 
+		user_id, 
+		credit_id, 
+		village_id, 
+		park_address, 
+		park_area, 
+		park_old_price, 
+		price, 
+		gprice, 
+		park_price, 
+		is_card, 
+		park_usage, 
+		park_no, 
+		house_no, 
+		land_no, 
+		estate_no, 
+		park_transfer_no, 
+		his_power_no, 
+		add_name, 
+		add_depart, 
+		update_name, 
+		state, 
+		add_time, 
+		update_time
+    </sql>
+
+	<select id="queryObject" resultType="com.hxy.sys.entity.SpCreditGuarantyEntity" resultMap="spCreditGuarantyMap">
+		select
+		<include refid="Base_Column_List" />
+		from sp_credit_guaranty
+		where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.hxy.sys.entity.SpCreditGuarantyEntity" resultMap="spCreditGuarantyMap">
+		select
+		<include refid="Base_Column_List" />
+		from sp_credit_guaranty
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+    <select id="queryListByBean" resultType="com.hxy.sys.entity.SpCreditGuarantyEntity" resultMap="spCreditGuarantyMap">
+        select
+        <include refid="Base_Column_List" />
+        from sp_credit_guaranty
+        WHERE 1=1
+    </select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from sp_credit_guaranty
+	</select>
+	 
+	<insert id="save" parameterType="com.hxy.sys.entity.SpCreditGuarantyEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into sp_credit_guaranty
+		(
+			`user_id`, 
+			`credit_id`, 
+			`village_id`, 
+			`park_address`, 
+			`park_area`, 
+			`park_old_price`, 
+			`price`, 
+			`gprice`, 
+			`park_price`, 
+			`is_card`, 
+			`park_usage`, 
+			`park_no`, 
+			`house_no`, 
+			`land_no`, 
+			`estate_no`, 
+			`park_transfer_no`, 
+			`his_power_no`, 
+			`add_name`, 
+			`add_depart`, 
+			`update_name`, 
+			`state`, 
+			`add_time`, 
+			`update_time`
+		)
+		values
+		(
+			#{userId}, 
+			#{creditId}, 
+			#{villageId}, 
+			#{parkAddress}, 
+			#{parkArea}, 
+			#{parkOldPrice}, 
+			#{price}, 
+			#{gprice}, 
+			#{parkPrice}, 
+			#{isCard}, 
+			#{parkUsage}, 
+			#{parkNo}, 
+			#{houseNo}, 
+			#{landNo}, 
+			#{estateNo}, 
+			#{parkTransferNo}, 
+			#{hisPowerNo}, 
+			#{addName}, 
+			#{addDepart}, 
+			#{updateName}, 
+			#{state}, 
+			#{addTime}, 
+			#{updateTime}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.hxy.sys.entity.SpCreditGuarantyEntity">
+		update sp_credit_guaranty 
+		<set>
+			<if test="userId != null">`user_id` = #{userId}, </if>
+			<if test="creditId != null">`credit_id` = #{creditId}, </if>
+			<if test="villageId != null">`village_id` = #{villageId}, </if>
+			<if test="parkAddress != null">`park_address` = #{parkAddress}, </if>
+			<if test="parkArea != null">`park_area` = #{parkArea}, </if>
+			<if test="parkOldPrice != null">`park_old_price` = #{parkOldPrice}, </if>
+			<if test="price != null">`price` = #{price}, </if>
+			<if test="gprice != null">`gprice` = #{gprice}, </if>
+			<if test="parkPrice != null">`park_price` = #{parkPrice}, </if>
+			<if test="isCard != null">`is_card` = #{isCard}, </if>
+			<if test="parkUsage != null">`park_usage` = #{parkUsage}, </if>
+			<if test="parkNo != null">`park_no` = #{parkNo}, </if>
+			<if test="houseNo != null">`house_no` = #{houseNo}, </if>
+			<if test="landNo != null">`land_no` = #{landNo}, </if>
+			<if test="estateNo != null">`estate_no` = #{estateNo}, </if>
+			<if test="parkTransferNo != null">`park_transfer_no` = #{parkTransferNo}, </if>
+			<if test="hisPowerNo != null">`his_power_no` = #{hisPowerNo}, </if>
+			<if test="addName != null">`add_name` = #{addName}, </if>
+			<if test="addDepart != null">`add_depart` = #{addDepart}, </if>
+			<if test="updateName != null">`update_name` = #{updateName}, </if>
+			<if test="state != null">`state` = #{state}, </if>
+			<if test="addTime != null">`add_time` = #{addTime}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from sp_credit_guaranty where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from sp_credit_guaranty where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

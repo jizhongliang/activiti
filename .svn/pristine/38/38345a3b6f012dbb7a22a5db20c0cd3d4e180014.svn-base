@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hxy.sys.dao.SpVillageDao">
+
+
+    <resultMap type="com.hxy.sys.entity.SpVillageEntity" id="spVillageMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="area" column="area"/>
+        <result property="city" column="city"/>
+        <result property="county" column="county"/>
+        <result property="totalHouseholds" column="total_households"/>
+        <result property="housePrices" column="house_prices"/>
+        <result property="parkingNum" column="parking_num"/>
+        <result property="deliverTime" column="deliver_time"/>
+        <result property="isCredentials" column="is_credentials"/>
+        <result property="rate" column="rate"/>
+        <result property="lowerParkingPrice" column="lower_parking_price"/>
+        <result property="highestParkingPrice" column="highest_parking_price"/>
+        <result property="developerName" column="developer_name"/>
+        <result property="propertyName" column="property_name"/>
+        <result property="remark" column="remark"/>
+        <result property="orgId" column="org_id"/>
+        <result property="approvalUserId" column="approval_user_id"/>
+        <result property="type" column="type"/>
+        <result property="blackRemark" column="black_remark"/>
+        <result property="isBlack" column="is_black"/>
+        <result property="isNeedSign" column="is_need_sign"/>
+        <result property="isUsed" column="is_used"/>
+        <result property="isCaution" column="is_caution"/>
+        <result property="isDelete" column="is_delete"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="status" column="status"/>
+        <result property="startUserId" column="start_user_id"/>
+        <result property="instanceId" column="instance_id"/>
+        <result property="defid" column="defid"/>
+        <result property="startTime" column="start_time"/>
+        <result property="actResult" column="act_result"/>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+		id, 
+		name, 
+		area, 
+		city, 
+		county, 
+		total_households, 
+		house_prices, 
+		parking_num, 
+		deliver_time, 
+		is_credentials, 
+		rate, 
+		lower_parking_price, 
+		highest_parking_price, 
+		developer_name, 
+		property_name, 
+		remark, 
+		org_id, 
+		approval_user_id, 
+		type, 
+		black_remark, 
+		is_black, 
+		is_need_sign, 
+		is_used, 
+		is_caution, 
+		is_delete, 
+		create_time, 
+		update_time, 
+		status, 
+		start_user_id, 
+		instance_id, 
+		defid, 
+		start_time, 
+		act_result
+    </sql>
+
+	<select id="queryObject" resultType="com.hxy.sys.entity.SpVillageEntity" resultMap="spVillageMap">
+		select
+		<include refid="Base_Column_List" />
+		from sp_village
+		where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.hxy.sys.entity.SpVillageEntity" resultMap="spVillageMap">
+		select
+		<include refid="Base_Column_List" />
+		from sp_village
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+    <select id="queryListByBean" resultType="com.hxy.sys.entity.SpVillageEntity" resultMap="spVillageMap">
+        select
+        <include refid="Base_Column_List" />
+        from sp_village
+        WHERE 1=1
+    </select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from sp_village
+	</select>
+	 
+	<insert id="save" parameterType="com.hxy.sys.entity.SpVillageEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into sp_village
+		(
+			`name`, 
+			`area`, 
+			`city`, 
+			`county`, 
+			`total_households`, 
+			`house_prices`, 
+			`parking_num`, 
+			`deliver_time`, 
+			`is_credentials`, 
+			`rate`, 
+			`lower_parking_price`, 
+			`highest_parking_price`, 
+			`developer_name`, 
+			`property_name`, 
+			`remark`, 
+			`org_id`, 
+			`approval_user_id`, 
+			`type`, 
+			`black_remark`, 
+			`is_black`, 
+			`is_need_sign`, 
+			`is_used`, 
+			`is_caution`, 
+			`is_delete`, 
+			`create_time`, 
+			`update_time`, 
+			`status`, 
+			`start_user_id`, 
+			`instance_id`, 
+			`defid`, 
+			`start_time`, 
+			`act_result`
+		)
+		values
+		(
+			#{name}, 
+			#{area}, 
+			#{city}, 
+			#{county}, 
+			#{totalHouseholds}, 
+			#{housePrices}, 
+			#{parkingNum}, 
+			#{deliverTime}, 
+			#{isCredentials}, 
+			#{rate}, 
+			#{lowerParkingPrice}, 
+			#{highestParkingPrice}, 
+			#{developerName}, 
+			#{propertyName}, 
+			#{remark}, 
+			#{orgId}, 
+			#{approvalUserId}, 
+			#{type}, 
+			#{blackRemark}, 
+			#{isBlack}, 
+			#{isNeedSign}, 
+			#{isUsed}, 
+			#{isCaution}, 
+			#{isDelete}, 
+			#{createTime}, 
+			#{updateTime}, 
+			#{status}, 
+			#{startUserId}, 
+			#{instanceId}, 
+			#{defid}, 
+			#{startTime}, 
+			#{actResult}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.hxy.sys.entity.SpVillageEntity">
+		update sp_village 
+		<set>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="area != null">`area` = #{area}, </if>
+			<if test="city != null">`city` = #{city}, </if>
+			<if test="county != null">`county` = #{county}, </if>
+			<if test="totalHouseholds != null">`total_households` = #{totalHouseholds}, </if>
+			<if test="housePrices != null">`house_prices` = #{housePrices}, </if>
+			<if test="parkingNum != null">`parking_num` = #{parkingNum}, </if>
+			<if test="deliverTime != null">`deliver_time` = #{deliverTime}, </if>
+			<if test="isCredentials != null">`is_credentials` = #{isCredentials}, </if>
+			<if test="rate != null">`rate` = #{rate}, </if>
+			<if test="lowerParkingPrice != null">`lower_parking_price` = #{lowerParkingPrice}, </if>
+			<if test="highestParkingPrice != null">`highest_parking_price` = #{highestParkingPrice}, </if>
+			<if test="developerName != null">`developer_name` = #{developerName}, </if>
+			<if test="propertyName != null">`property_name` = #{propertyName}, </if>
+			<if test="remark != null">`remark` = #{remark}, </if>
+			<if test="orgId != null">`org_id` = #{orgId}, </if>
+			<if test="approvalUserId != null">`approval_user_id` = #{approvalUserId}, </if>
+			<if test="type != null">`type` = #{type}, </if>
+			<if test="blackRemark != null">`black_remark` = #{blackRemark}, </if>
+			<if test="isBlack != null">`is_black` = #{isBlack}, </if>
+			<if test="isNeedSign != null">`is_need_sign` = #{isNeedSign}, </if>
+			<if test="isUsed != null">`is_used` = #{isUsed}, </if>
+			<if test="isCaution != null">`is_caution` = #{isCaution}, </if>
+			<if test="isDelete != null">`is_delete` = #{isDelete}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="startUserId != null">`start_user_id` = #{startUserId}, </if>
+			<if test="instanceId != null">`instance_id` = #{instanceId}, </if>
+			<if test="defid != null">`defid` = #{defid}, </if>
+			<if test="startTime != null">`start_time` = #{startTime}, </if>
+			<if test="actResult != null">`act_result` = #{actResult}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from sp_village where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from sp_village where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

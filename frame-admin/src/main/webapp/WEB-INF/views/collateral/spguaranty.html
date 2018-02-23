@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>担保物管理</title>
+#parse("sys/header.html")
+	<link rel="stylesheet" href="${rc.contextPath}/statics/plugins/bootstrap-datetimepicker-0.0.11/css/bootstrap-combined.min.css">
+	<style type="text/css">
+		.form-control {
+			display: inline-block;
+			width: 190px;
+			height: 32px;
+		}
+		.layui-form-label{
+			display: inline-block;
+			float: initial;
+			width: 120px;
+			cursor: default;
+		}
+		.grid-btn{
+			margin: 10px;
+			white-space: nowrap;
+			cursor: default;
+		}
+	</style>
+</head>
+<body>
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+
+		<div class="panel panel-default panel-div">
+			<div class="panel-heading">筛选查询</div>
+		<div class="grid-btn">
+			<label class="layui-form-label" style="width:6%;">客户名称:</label>
+			<input type="text" class="form-control" style="height: 32px;width:190px"v-model="q.userName" @keyup.enter="query" placeholder="客户名称">
+			<label class="layui-form-label" style="width:6%;">主合同号:</label>
+			<input type="text" class="form-control" style="height: 32px;width:190px"v-model="q.contractNum" @keyup.enter="query" placeholder="主合同号">
+			<label class="layui-form-label" style="width:6%;">登记公司:</label>
+
+			<select class="form-control input-400" v-model="q.userName" placeholder="登记公司">
+				<option value="">登记公司</option>
+			</select>
+
+			<label class="layui-form-label" style="width:6%;">登记部门:</label>
+			<select class="form-control input-400" v-model="q.userName" placeholder="登记部门">
+				<option value="">登记部门</option>
+			</select>
+			<label class="layui-form-label" style="width:6%;">登记人:</label>
+			<input type="text" class="form-control" style="height: 32px;width:190px"v-model="q.contractNum" @keyup.enter="query" placeholder="登记人">
+
+		</div>
+
+
+		<div class="grid-btn">
+			<label class="layui-form-label" style="width:6%;">担保物状态:</label>
+				<select class="form-control input-400" v-model="q.userName" placeholder="担保物状态">
+					<option value="">担保物状态</option>
+				</select>
+			<label class="layui-form-label" style="width:6%;">登记开始时间:</label>
+			<span id="datetimepicker" class="input-append date inline-div">
+				<input id="dataInput" type="text" class="form-control" style="height: 32px;width:162px" placeholder="登记开始时间"/>
+				<span class="add-on" style="height: 32px;"><i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                     </span>
+			</span>
+			<label class="layui-form-label" style="width:6%;">登记结束时间:</label>
+			<span id="datetimepicker1" class="input-append date inline-div">
+				<input id="dataInput1" type="text" class="form-control" style="height: 32px;width:162px" placeholder="登记结束时间"/>
+				<span class="add-on" style="height: 32px;">
+                     <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+					</span>
+			</span>
+			<label class="layui-form-label" style="width:6%;">&nbsp;</label>
+			<button class="layui-btn" id="searchSubmit"  @click="query"><i class="layui-icon">&#xe615;</i>查 询</button>
+			#if($shiro.hasPermission("spguaranty:save"))
+			<button class="layui-btn" @click="add" type="button"><i class="layui-icon">&#xe61f;</i> 新 增</button>
+			#end
+		</div>
+		</div>
+		<div class="panel panel-default panel-div">
+			<div class="panel-heading">数据列表</div>
+	    <table id="jqGrid" ></table>
+	    <div id="jqGridPager"></div>
+		</div>
+    </div>
+    
+    <div v-show="!showList" class="panel panel-default">
+		<div class="panel-heading">{{title}}</div>
+		<form class="form-horizontal">
+											<div class="form-group">
+			   	<div class="col-sm-2 control-label">客户名称</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="spGuaranty.userName" placeholder="客户名称"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">额度信息id</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="spGuaranty.creditId" placeholder="额度信息id"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">车位地址</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="spGuaranty.parkAddress" placeholder="车位地址"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">车位面积</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="spGuaranty.parkArea" placeholder="车位面积"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">担保物类型</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="spGuaranty.guarantyType" placeholder="担保物类型"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">评估价</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="spGuaranty.price" placeholder="评估价"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">公允价</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="spGuaranty.gprice" placeholder="公允价"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">车位号</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="spGuaranty.parkNo" placeholder="车位号"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">他项权证号</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="spGuaranty.hisPowerNo" placeholder="他项权证号"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">新增人</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="spGuaranty.addName" placeholder="新增人"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">新增部门</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="spGuaranty.addDepart" placeholder="新增部门"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">修改人</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="spGuaranty.updateName" placeholder="修改人"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">担保物状态:0:失效,1:正常</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="spGuaranty.state" placeholder="担保物状态:0:失效,1:正常"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">添加时间</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="spGuaranty.addTime" placeholder="添加时间"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">修改时间</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="spGuaranty.updateTime" placeholder="修改时间"/>
+			    </div>
+			</div>
+							<div class="form-group">
+				<div class="col-sm-2 control-label"></div>
+                <button class="layui-btn" type="button" @click="saveOrUpdate" >保存</button>
+                <button class="layui-btn layui-btn-warm" type="button" @click="reload" style="margin-left: 30px">返回</button>
+			</div>
+		</form>
+	</div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $('#datetimepicker').datetimepicker({
+            language:  'zh-CN',
+            format: 'yyyy-MM-dd hh:mm:ss',
+        });
+        $('#datetimepicker1').datetimepicker({
+            language:  'zh-CN',
+            format: 'yyyy-MM-dd hh:mm:ss',
+        });
+    })
+
+</script>
+<script src="${rc.contextPath}/statics/js/collateral/spguaranty.js?_${date.systemTime}"></script>
+</body>
+</html>

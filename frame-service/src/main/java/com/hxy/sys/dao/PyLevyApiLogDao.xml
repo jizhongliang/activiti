@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hxy.sys.dao.PyLevyApiLogDao">
+
+
+    <resultMap type="com.hxy.sys.entity.PyLevyApiLogEntity" id="pyLevyApiLogMap">
+        <result property="id" column="id"/>
+        <result property="aid" column="aid"/>
+        <result property="env" column="env"/>
+        <result property="client" column="client"/>
+        <result property="uid" column="uid"/>
+        <result property="mac" column="mac"/>
+        <result property="methodName" column="method_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="reqParam" column="req_param"/>
+        <result property="resData" column="res_data"/>
+        <result property="resCode" column="res_code"/>
+        <result property="reqTime" column="req_time"/>
+        <result property="resTime" column="res_time"/>
+        <result property="clientVersion" column="client_version"/>
+        <result property="description" column="description"/>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+		id, 
+		aid, 
+		env, 
+		client, 
+		uid, 
+		mac, 
+		method_name, 
+		create_time, 
+		req_param, 
+		res_data, 
+		res_code, 
+		req_time, 
+		res_time, 
+		client_version, 
+		description
+    </sql>
+
+	<select id="queryObject" resultType="com.hxy.sys.entity.PyLevyApiLogEntity" resultMap="pyLevyApiLogMap">
+		select
+		<include refid="Base_Column_List" />
+		from py_levy_api_log
+		where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.hxy.sys.entity.PyLevyApiLogEntity" resultMap="pyLevyApiLogMap">
+		select
+		<include refid="Base_Column_List" />
+		from py_levy_api_log
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+    <select id="queryListByBean" resultType="com.hxy.sys.entity.PyLevyApiLogEntity" resultMap="pyLevyApiLogMap">
+        select
+        <include refid="Base_Column_List" />
+        from py_levy_api_log
+        WHERE 1=1
+    </select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from py_levy_api_log
+	</select>
+	 
+	<insert id="save" parameterType="com.hxy.sys.entity.PyLevyApiLogEntity">
+		insert into py_levy_api_log
+		(
+			`id`, 
+			`aid`, 
+			`env`, 
+			`client`, 
+			`uid`, 
+			`mac`, 
+			`method_name`, 
+			`create_time`, 
+			`req_param`, 
+			`res_data`, 
+			`res_code`, 
+			`req_time`, 
+			`res_time`, 
+			`client_version`, 
+			`description`
+		)
+		values
+		(
+			#{id}, 
+			#{aid}, 
+			#{env}, 
+			#{client}, 
+			#{uid}, 
+			#{mac}, 
+			#{methodName}, 
+			#{createTime}, 
+			#{reqParam}, 
+			#{resData}, 
+			#{resCode}, 
+			#{reqTime}, 
+			#{resTime}, 
+			#{clientVersion}, 
+			#{description}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.hxy.sys.entity.PyLevyApiLogEntity">
+		update py_levy_api_log 
+		<set>
+			<if test="aid != null">`aid` = #{aid}, </if>
+			<if test="env != null">`env` = #{env}, </if>
+			<if test="client != null">`client` = #{client}, </if>
+			<if test="uid != null">`uid` = #{uid}, </if>
+			<if test="mac != null">`mac` = #{mac}, </if>
+			<if test="methodName != null">`method_name` = #{methodName}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="reqParam != null">`req_param` = #{reqParam}, </if>
+			<if test="resData != null">`res_data` = #{resData}, </if>
+			<if test="resCode != null">`res_code` = #{resCode}, </if>
+			<if test="reqTime != null">`req_time` = #{reqTime}, </if>
+			<if test="resTime != null">`res_time` = #{resTime}, </if>
+			<if test="clientVersion != null">`client_version` = #{clientVersion}, </if>
+			<if test="description != null">`description` = #{description}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from py_levy_api_log where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from py_levy_api_log where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

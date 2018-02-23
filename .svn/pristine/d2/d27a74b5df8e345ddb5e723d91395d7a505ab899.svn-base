@@ -1,0 +1,158 @@
+$(function () {
+    $("#jqGrid").jqGrid({
+        url: '../spvillage/list',
+        datatype: "json",
+        colModel: [			
+			{ label: 'id', name: 'id', index: 'id', width: 50, key: true },
+			{ label: '小区名称', name: 'name', index: 'name', width: 80 },
+			{ label: '地区', name: 'area', index: 'area', width: 80 }, 			
+			{ label: '城市', name: 'city', index: 'city', width: 80 }, 			
+			{ label: '区县', name: 'county', index: 'county', width: 80 }, 			
+			{ label: '总户数', name: 'totalHouseholds', index: 'total_households', width: 80 }, 			
+			{ label: '房价均价', name: 'housePrices', index: 'house_prices', width: 80 }, 			
+			{ label: '车位数量', name: 'parkingNum', index: 'parking_num', width: 80 },
+            { label: '是否有证.1:有,0:没有', name: 'isCredentials', index: 'is_credentials', width: 80 },
+			{ label: '车位最低价', name: 'lowerParkingPrice', index: 'lower_parking_price', width: 80 }, 			
+			{ label: '车位最高价', name: 'highestParkingPrice', index: 'highest_parking_price', width: 80 },
+            { label: '车位比.总户数与车位数量之间的比例', name: 'rate', index: 'rate', width: 80 },
+            { label: '开发商公司名称', name: 'developerName', index: 'developer_name', width: 80 },
+			{ label: '物业公司名称', name: 'propertyName', index: 'property_name', width: 80 },
+            { label: '创建时间', name: 'createTime', index: 'create_time', width: 80 },
+            { label: '流程发起人', name: 'startUserId', index: 'start_user_id', width: 80 },
+            { label: '更新时间', name: 'updateTime', index: 'update_time', width: 80 },
+            { label: '审批人ID', name: 'approvalUserId', index: 'approval_user_id', width: 80 },
+			{ label: '小区类型', name: 'type', index: 'type', width: 80 },
+            { label: '小区所属机构', name: 'orgId', index: 'orgId', width: 80 },
+            { label: '小区状态', name: 'isBlack', index: 'is_black', width: 80 },
+            { label: '是否警示类小区', name: 'isCaution', index: 'is_caution', width: 80 }
+        ],
+		viewrecords: true,
+        height: 385,
+        rowNum: 10,
+		rowList : [10,30,50],
+        rownumbers: true, 
+        rownumWidth: 25, 
+        autowidth:true,
+        multiselect: true,
+        pager: "#jqGridPager",
+        jsonReader : {
+            root: "page.list",
+            page: "page.currPage",
+            total: "page.totalPage",
+            records: "page.totalCount"
+        },
+        prmNames : {
+            page:"page", 
+            rows:"limit", 
+            order: "order"
+        },
+        gridComplete:function(){
+        	//隐藏grid底部滚动条
+        	$("#jqGrid").closest(".ui-jqgrid-bdiv").css({ "overflow-x" : "hidden" });
+        }
+    });
+});
+
+var vm = new Vue({
+	el:'#rrapp',
+	data:{
+		showList: true,
+		title: null,
+		spVillage: {
+            name:null,
+            area:null,
+            city:null,
+            county:null,
+            orgId:null,
+            startUserId:null,
+            isCredentials:null,
+            type:null
+		}
+	},
+	methods: {
+		query: function () {
+			vm.reload(spVillage);
+		},
+		add: function(){
+			vm.showList = false;
+			vm.title = "新增";
+			vm.spVillage = {};
+		},
+		update: function (event) {
+			var id = getSelectedRow();
+			if(id == null){
+				return ;
+			}
+			vm.showList = false;
+            vm.title = "修改";
+
+            vm.getInfo(id)
+		},
+		saveOrUpdate: function (event) {
+			var url = vm.spVillage.id == null ? "../spvillage/save" : "../spvillage/update";
+			$.ajax({
+				type: "POST",
+			    url: url,
+			    data: JSON.stringify(vm.spVillage),
+			    success: function(r){
+			    	if(r.code === 0){
+						alert(r, function(index){
+							vm.reload();
+						});
+					}else{
+						alert(r.msg);
+					}
+				}
+			});
+		},
+		del: function (event) {
+			var ids = getSelectedRows();
+			if(ids == null){
+				return ;
+			}
+
+			confirm('确定要删除选中的记录？', function(){
+				$.ajax({
+					type: "POST",
+				    url: "../spvillage/delete",
+				    data: JSON.stringify(ids),
+				    success: function(r){
+						if(r.code == 0){
+							alert(r, function(index){
+								$("#jqGrid").trigger("reloadGrid");
+							});
+						}else{
+							alert(r.msg);
+						}
+					}
+				});
+			});
+		},
+		getInfo: function(id){
+			$.get("../spvillage/info/"+id, function(r){
+                if(r.code == 0){
+                    vm.spVillage = r.spVillage;
+                }else{
+                    alert(r.msg);
+                }
+            });
+		},
+		reload: function (event) {
+			vm.showList = true;
+			var page = $("#jqGrid").jqGrid('getGridParam','page');
+			$("#jqGrid").jqGrid('setGridParam',{
+                postData:{
+                    'name': vm.spVillage.name,
+                    'area': vm.spVillage.area,
+                    'city': vm.spVillage.city,
+                    'county': vm.spVillage.county,
+                    'orgId': vm.spVillage.orgId,
+                    'startUserId': vm.spVillage.startUserId,
+                    'isCredentials': vm.spVillage.isCredentials,
+                    'type': vm.spVillage.type
+				},
+                page:page
+            }).trigger("reloadGrid");
+		}
+	}
+});

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hxy.sys.dao.SpContractDao">
+
+
+    <resultMap type="com.hxy.sys.entity.SpContractEntity" id="spContractMap">
+        <result property="id" column="id"/>
+        <result property="contractNum" column="contract_num"/>
+        <result property="idNo" column="id_no"/>
+        <result property="idName" column="id_name"/>
+        <result property="instanceName" column="instance_name"/>
+        <result property="credit" column="credit"/>
+        <result property="contractState" column="contract_state"/>
+        <result property="adderName" column="adder_name"/>
+        <result property="contractStartTime" column="contract_start_time"/>
+        <result property="contractEndTime" column="contract_end_time"/>
+        <result property="creditId" column="credit_id"/>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+		id, 
+		contract_num, 
+		id_no, 
+		id_name, 
+		instance_name, 
+		credit, 
+		contract_state, 
+		adder_name, 
+		contract_start_time, 
+		contract_end_time, 
+		credit_id
+    </sql>
+
+	<select id="queryObject" resultType="com.hxy.sys.entity.SpContractEntity" resultMap="spContractMap">
+		select
+		<include refid="Base_Column_List" />
+		from sp_contract
+		where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.hxy.sys.entity.SpContractEntity" resultMap="spContractMap">
+		SELECT sc.`contract_num`,
+		ard.`NAME_` AS instance_name,
+		su.name AS idName,
+		su.id_no AS idNo,
+		sc.`credit`,
+		ssu.`user_name` AS adder_name,
+		sc.`status` AS contract_state,
+		sc.declare_time AS contract_start_time,
+		sc.update_time AS contract_end_time,
+		sc.`id` AS credit_id
+		FROM
+		sp_credit sc
+		LEFT JOIN act_re_deployment ard ON ard.`ID_`=sc.`instance_id`
+		LEFT JOIN sp_user su ON su.`id`=sc.`user_id`
+		LEFT JOIN sp_sys_user ssu ON ssu.`id`=sc.`add_id`
+		WHERE 1=1
+		<if test="instanceName != null and instanceName.trim() != ''">
+			and ard.`NAME_` like concat('%',#{instanceName},'%')
+		</if>
+		<if test="contractNum != null and contractNum.trim() != ''">
+			and sc.`contract_num` like concat('%',#{contractNum},'%')
+		</if>
+		<if test="idNo != null and idNo.trim() != ''">
+			and su.id_no like concat('%',#{idNo},'%')
+		</if>
+		<if test="contractStartTime != null">
+			and DATE_FORMAT(sc.declare_time,'%Y-%m-%d') &gt;=
+			#{contractStartTime,jdbcType=TIMESTAMP}
+		</if>
+		<if test="contractEndTime  != null">
+			and DATE_FORMAT(sc.declare_time,'%Y-%m-%d') &lt;=
+			#{contractEndTime,jdbcType=TIMESTAMP}
+		</if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by credit_id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*)
+		FROM
+		sp_credit sc
+		LEFT JOIN act_re_deployment ard ON ard.`ID_`=sc.`instance_id`
+		LEFT JOIN sp_user su ON su.`id`=sc.`user_id`
+		LEFT JOIN sp_sys_user ssu ON ssu.`id`=sc.`add_id`
+		WHERE 1=1
+		<if test="instanceName != null and instanceName.trim() != ''">
+			and ard.`NAME_` like concat('%',#{instanceName},'%')
+		</if>
+		<if test="contractNum != null and contractNum.trim() != ''">
+			and sc.`contract_num` like concat('%',#{contractNum},'%')
+		</if>
+		<if test="idNo != null and idNo.trim() != ''">
+			and su.id_no like concat('%',#{idNo},'%')
+		</if>
+		<if test="contractStartTime != null">
+			and DATE_FORMAT(sc.declare_time,'%Y-%m-%d') &gt;=
+			#{contractStartTime,jdbcType=TIMESTAMP}
+		</if>
+		<if test="contractEndTime  != null">
+			and DATE_FORMAT(sc.declare_time,'%Y-%m-%d') &lt;=
+			#{contractEndTime,jdbcType=TIMESTAMP}
+		</if>
+	</select>
+</mapper>

@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>小区表</title>
+#parse("sys/header.html")
+
+	<style type="text/css">
+		.form-control {
+			display: inline-block;
+			width: 150px;
+			height: 34px;
+		}
+		.layui-form-label{
+			display: inline-block;
+			float: initial;
+			width: 120px;
+			height: 34px;
+		}
+		.grid-btn{
+			margin: 10px;
+			white-space: nowrap;
+			cursor: default;
+		}
+		.col-sm-2{
+			width: 200px;
+		}
+		.form-group{
+			width: 1200px;
+		}
+		.col-sm-3{
+			margin: initial;
+			width:400px;
+		}
+		.upload-img{
+			width: 120px;
+			height: 90px;
+			background: url("${rc.contextPath}/statics/images/camera.png");
+			background-repeat:no-repeat;
+			background-size:120px 90px;
+			cursor: pointer;
+		}
+		.panel-div{
+			margin-top: 20px;
+			margin-bottom: 0px;
+		}
+
+	</style>
+<body>
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+		<div class="panel panel-default panel-div">
+			<div class="panel-heading">筛选查询</div>
+		<div class="grid-btn">
+				<label class="layui-form-label" >小区名称:</label>
+				<input type="text" class="form-control"  v-model="q.name" @keyup.enter="query" placeholder="小区名称"  >
+				<label class="layui-form-label" >小区所在省:</label>
+				<select id="provinceSelect1" onChange="changeProvince1()" class="form-control input-400"   v-model="q.area"  placeholder="请选择省份">
+					<option value="">请选择省份</option>
+				</select>
+				<label class="layui-form-label" >小区所在市:</label>
+				<select id="citySelect1" onChange="changeCity1()" class="form-control input-400" v-model="q.city"  placeholder="请选择城市">
+					<option value="">请选择城市</option>
+				</select>
+				<label class="layui-form-label" >小区所在区:</label>
+				<select id="countySelect1"  class="form-control input-400"  v-model="q.county" placeholder="请选择区县">
+					<option value="">请选择区县</option>
+				</select>
+		</div>
+		<div class="grid-btn">
+
+				<label class="layui-form-label" >小区所属机构:</label>
+				<input type="text" class="form-control" v-model="q.orgId" @keyup.enter="query" placeholder="小区所属机构">
+
+				<label class="layui-form-label">小区来源:</label>
+				<input type="text" class="form-control" v-model="q.startUserId" @keyup.enter="query" placeholder="小区来源">
+
+				<label class="layui-form-label" >是否有证:</label>
+				<input type="text" class="form-control" v-model="q.isCredentials" @keyup.enter="query" placeholder="是否有证">
+
+				<label class="layui-form-label" >小区类型:</label>
+				<input type="text" class="form-control" v-model="q.type" @keyup.enter="query" placeholder="小区类型">
+		</div>
+		<div >
+			<button class="layui-btn" id="searchSubmit" @click="query"><i class="layui-icon">&#xe615;</i>查 询</button>
+			#if($shiro.hasPermission("spvillage:save"))
+			<button class="layui-btn" @click="add" type="button"><i class="layui-icon">&#xe61f;</i> 新 增</button>
+			#end
+			#if($shiro.hasPermission("spvillage:update"))
+			<button class="layui-btn layui-btn-normal" type="button" @click="update"><i class="layui-icon">&#xe642;</i>编辑</button>
+			#end
+			#if($shiro.hasPermission("spvillage:delete"))
+			<button class="layui-btn layui-btn-danger" type="button" @click="del"><i class="layui-icon">&#xe640;</i>删除</button>
+			#end
+		</div>
+		</div>
+		<div class="panel panel-default panel-div">
+			<div class="panel-heading">数据列表</div>
+		</div>
+
+	    <table id="jqGrid"></table>
+
+	    <div id="jqGridPager"></div>
+    </div>
+
+
+    <div v-show="!showList" class="panel panel-default">
+		<div class="panel-heading">{{title}}</div>
+
+		<div class="panel panel-default panel-div">
+			<div class="panel-heading">楼盘信息</div>
+			<form class="form-horizontal">
+				<div class="form-group">
+					<div class="col-sm-2 control-label">
+						楼盘所在地区:
+					</div>
+					<div class="col-sm-2">
+						<select id="provinceSelect" onChange="changeProvince()" class="form-control input-400"  placeholder="请选择省份" v-model="spVillage.area">
+							<option value="">请选择省份</option>
+						</select>
+					</div>
+					<div class="col-sm-2">
+						<select id="citySelect" onChange="changeCity()" class="form-control input-400"  placeholder="请选择城市" v-model="spVillage.city">
+							<option value="">请选择城市</option>
+						</select>
+					</div>
+					<div class="col-sm-2">
+						<select id="countySelect"  class="form-control input-400"  placeholder="请选择区县" v-model="spVillage.county">
+							<option value="">请选择区县</option>
+						</select>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-2 control-label">楼盘名称:</div>
+					<div class="col-sm-2">
+						<input type="text" class="form-control" v-model="spVillage.name" placeholder="楼盘名称" />
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-2 control-label">总户数:</div>
+					<div class="col-sm-2">
+						<input type="text" class="form-control" v-model="spVillage.totalHouseholds" placeholder="总户数"/>
+						户
+					</div>
+					<div class="col-sm-2 control-label">房价均价:</div>
+					<div class="col-sm-2">
+						<input type="text" class="form-control" v-model="spVillage.housePrices" placeholder="房价均价"/>
+						元
+					</div>
+				</div>
+			</form>
+		</div>
+
+
+		<div class="panel panel-default panel-div">
+			<div class="panel-heading">车位信息</div>
+			<form class="form-horizontal">
+				<div class="form-group">
+					<div class="form-group">
+						<div class="col-sm-2 control-label">车位数量:</div>
+						<div class="col-sm-2">
+							<input type="text" class="form-control" v-model="spVillage.parkingNum" placeholder="车位数量"/>
+						</div>
+						<div class="col-sm-2 control-label">是否有证:</div>
+						<div class="col-sm-2">
+							<input type="text" class="form-control" v-model="spVillage.isCredentials" placeholder="是否有证"/>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-2 control-label">车位比:</div>
+						<div class="col-sm-2">
+							<input type="text" class="form-control" v-model="spVillage.rate" placeholder="车位比"/>
+						</div>
+						<div class="col-sm-2 control-label">车位价格区间:</div>
+						<div class="col-sm-3">
+							<input type="text" class="form-control" v-model="spVillage.lowerParkingPrice" placeholder="车位最低价"/>-
+							<input type="text" class="form-control" v-model="spVillage.highestParkingPrice" placeholder="车位最高价"/>
+							元
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<div class="panel panel-default panel-div">
+			<div class="panel-heading">开发商信息</div>
+			<form class="form-horizontal">
+				<div class="form-group">
+					<div class="form-group">
+						<div class="col-sm-2 control-label">开发商名称:</div>
+						<div class="col-sm-2">
+							<input type="text" class="form-control" v-model="spVillage.developerName" placeholder="开发商名称" style="width: 400px;"/>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<div class="panel panel-default panel-div">
+			<div class="panel-heading">物业公司名信息</div>
+			<form class="form-horizontal">
+				<div class="form-group">
+					<div class="form-group">
+						<div class="col-sm-2 control-label">物业公司名称:</div>
+						<div class="col-sm-2">
+							<input type="text" class="form-control" v-model="spVillage.propertyName" placeholder="物业公司名称" style="width: 400px;"/>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<div class="panel panel-default panel-div">
+			<div class="panel-heading">附件信息</div>
+			<form class="form-horizontal">
+				<div class="form-group">
+					<div class="form-group">
+						<div class="col-sm-2 control-label div-height-90">尽调报告:</div>
+						<div class="col-sm-10">
+							<div class="container">
+								<label>请选择一个图像文件：</label>
+								<input type="file" id="file_input" multiple/>
+							</div>
+							<!--<div style="text-align: center;border-top: 1px solid #dddddd;padding-top: 20px;font-size: 20px;cursor: pointer">
+								<div id="addGuarantor">+&nbsp;添加保证人信息</div>
+							</div>-->
+						</div>
+						<div class="col-sm-2 control-label div-height-90">小区照片:</div>
+						<div class="col-sm-10">
+							<div class="upload-img">
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<div class="panel panel-default panel-div">
+			<div class="panel-heading">项目申报意见</div>
+			<form class="form-horizontal">
+				<div class="form-group">
+					<div class="form-group">
+						<div class="col-sm-2 control-label">客户经理意见</div>
+						<div class="col-sm-2">
+							<input type="text" class="form-control" v-model="spVillage.remark" placeholder="客户经理意见" style="width: 400px;height: 50px;"/>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+
+
+		<div class="form-group">
+			<div class="col-sm-2 control-label"></div>
+			<button class="layui-btn" type="button" @click="saveOrUpdate" >保存</button>
+			<button class="layui-btn layui-btn-warm" type="button" @click="reload" style="margin-left: 30px">返回</button>
+		</div>
+
+			<!--&lt;!&ndash;三级联动&ndash;&gt;
+			<div id="selectId" class="layui-form-item">选择</div>-->
+		</form>
+	</div>
+</div>
+
+
+<script src="${rc.contextPath}/statics/js/village/spvillage.js?_${date.systemTime}"></script>
+
+<!--<script>
+    $(function () {
+        initEvent();
+    })
+    function initEvent() {
+        $("#addGuarantor").click(function(){
+            var showLength=$(".list-bz-div:visible").length;
+            if(showLength<5){
+                $(".list-bz-div:hidden").eq(0).show();
+            }else{
+                alert("最大支持添加5个保证人");
+            }
+            hideFirstDelButton();
+            resetLabel();
+        })
+
+        $(".delButton").click(function(){
+            var parent=$(this).parent();
+            parent.find("input[type='text']").val("");
+            parent.hide();
+            hideFirstDelButton();
+            resetLabel();
+        })
+    }
+</script>-->
+<!--<script src="${rc.contextPath}/statics/js/village/citySelect.js"></script>
+<script>
+    layui.use('citySelect', function() {  //与引用其他原始模块一样，引入citySelect模块
+        var $ = layui.jquery,
+            citySelect = layui.citySelect;
+		var area = getArea();
+        //初始化
+        citySelect.render({
+            id:'addRegion',
+            elem: '#selectId',
+            url:"<%=basePath%>/userInfo/queryRegionList.ft",
+			data:area,    //设置本地数据渲染
+            method:'post',
+            //lableName:'行政区域',    //自定义表单名称    默认：'行政区域'
+            //search:false,        //是否开启输入查询 默认：true
+            //required:true,        //是否必选       默认：false
+            msg:'[药店]角色根据所选择连锁决定',  //模块下的提示信息 默认：null
+            selectedArr:regionArr,    //默认选中数组        默认：[]
+            where:{},
+            response: {
+                statusName: 'resultCode',
+                statusCode: 0,
+                msgName: 'msg',
+                dataName: 'result'
+            },
+            filed:{
+                area:true,    //是否启用区
+                regionId:'regionId',
+                regionName:'regionName',
+                //provinceName: "province",    //默认省份名称
+                //cityName : "city",      //默认城市名称
+                //areaName : "area",      //默认区县名称
+            },
+            done:function(res){
+                //成功回调函数
+				alert(1)
+            },
+            error:function(res,e,m){
+                //失败回调函数
+            }
+        });
+    });
+</script>-->
+</body>
+</html>

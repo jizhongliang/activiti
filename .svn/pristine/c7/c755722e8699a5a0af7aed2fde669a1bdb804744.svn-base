@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+#parse("sys/header.html")
+</head>
+<body>
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+		<div class="grid-btn">
+			#if($shiro.hasPermission("apilog:save"))
+            <button class="layui-btn" @click="add" type="button"><i class="layui-icon">&#xe61f;</i> 新 增</button>
+			#end
+			#if($shiro.hasPermission("apilog:update"))
+            <button class="layui-btn layui-btn-normal" type="button" @click="update"><i class="layui-icon">&#xe642;</i>编辑</button>
+			#end
+			#if($shiro.hasPermission("apilog:delete"))
+            <button class="layui-btn layui-btn-danger" type="button" @click="del"><i class="layui-icon">&#xe640;</i>删除</button>
+			#end
+		</div>
+	    <table id="jqGrid"></table>
+	    <div id="jqGridPager"></div>
+    </div>
+    
+    <div v-show="!showList" class="panel panel-default">
+		<div class="panel-heading">{{title}}</div>
+		<form class="form-horizontal">
+											<div class="form-group">
+			   	<div class="col-sm-2 control-label">应用类型:0-商户服务；1-用户服务；2-内部系统</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="apiLog.aid" placeholder="应用类型:0-商户服务；1-用户服务；2-内部系统"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">服务平台类型，0-开发，1-测试，2-生产</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="apiLog.env" placeholder="服务平台类型，0-开发，1-测试，2-生产"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">客户端类型，0-未知；1-ios；2-android；3-web</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="apiLog.client" placeholder="客户端类型，0-未知；1-ios；2-android；3-web"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">已登录用户全局id</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="apiLog.uid" placeholder="已登录用户全局id"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">如果是未登录的api请求，客户端的唯一标示</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="apiLog.mac" placeholder="如果是未登录的api请求，客户端的唯一标示"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label"></div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="apiLog.methodName" placeholder=""/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label"></div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="apiLog.createTime" placeholder=""/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label"></div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="apiLog.reqParam" placeholder=""/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label"></div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="apiLog.resData" placeholder=""/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">请求结果返回码</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="apiLog.resCode" placeholder="请求结果返回码"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">请求时间戳</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="apiLog.reqTime" placeholder="请求时间戳"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">响应时间戳</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="apiLog.resTime" placeholder="响应时间戳"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">客户端版本号</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="apiLog.clientVersion" placeholder="客户端版本号"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label"></div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="apiLog.description" placeholder=""/>
+			    </div>
+			</div>
+							<div class="form-group">
+				<div class="col-sm-2 control-label"></div>
+                <button class="layui-btn" type="button" @click="saveOrUpdate" >保存</button>
+                <button class="layui-btn layui-btn-warm" type="button" @click="reload" style="margin-left: 30px">返回</button>
+			</div>
+		</form>
+	</div>
+</div>
+
+<script src="${rc.contextPath}/statics/js/sys/apilog.js?_${date.systemTime}"></script>
+</body>
+</html>

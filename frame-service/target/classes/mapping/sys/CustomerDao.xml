@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hxy.sys.dao.CustomerDao">
+
+
+    <resultMap type="com.hxy.sys.entity.CustomerResponse" id="ResponseMap">
+        <result property="name" column="name"/>
+        <result property="sex" column="sex"/>
+        <result property="phone" column="phone"/>
+        <result property="checkDate" column="check_date"/>
+        <result property="source" column="source"/>
+        <result property="updateDate" column="update-date"/>
+        <result property="company" column="company"/>
+        <result property="postalAddress" column="postal_address"/>
+        <result property="tradeType" column="trade_type"/>
+        <result property="sysUser" column="sys_user"/>
+        <result property="organ" column="organ"/>
+        <result property="state" column="state"/>
+        <result property="cautionState" column="caution_state"/>
+        <result property="village" column="village"/>
+    </resultMap>
+    <select id="queryResponseList"  resultType="com.hxy.sys.entity.CustomerResponse" resultMap="ResponseMap">
+
+
+
+
+    </select>
+
+</mapper>

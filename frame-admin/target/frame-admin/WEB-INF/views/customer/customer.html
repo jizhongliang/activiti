@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>客户管理</title>
+#parse("sys/header.html")
+	<link rel="stylesheet" href="${rc.contextPath}/statics/plugins/bootstrap-datetimepicker-0.0.11/css/bootstrap-combined.min.css">
+	<style type="text/css">
+		.col-sm-1.control-label{
+			margin: 0px 0px 0px 80px;
+		}
+		.form-horizontal .control-label{
+			width:100px;
+		}
+		.form-group{
+			width: 1555px;
+		}
+		.panel-div{
+			margin: 20px 10px;
+		}
+		.form-control {
+			display: inline-block;
+			width: 190px;
+			height: 32px;
+		}
+		.layui-form-label{
+			display: inline-block;
+			float: initial;
+			width: 120px;
+			cursor: default;
+		}
+		.grid-btn{
+			margin: 10px;
+			white-space: nowrap;
+			cursor: default;
+		}
+		.upload-img{
+			width: 120px;
+			height: 90px;
+			background: url("${rc.contextPath}/statics/images/camera.png");
+			background-repeat:no-repeat;
+			background-size:120px 90px;
+			cursor: pointer;
+		}
+	</style></head>
+<body>
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+		<div class="panel panel-default panel-div">
+			<div class="panel-heading">筛选查询</div>
+			<div class="grid-btn">
+				<label class="layui-form-label" style="width:6%;">客户名称:</label>
+				<input type="text" class="form-control" style="height: 32px;width:190px"v-model="q.userName" @keyup.enter="query" placeholder="客户名称">
+				<label class="layui-form-label" style="width:6%;">身份证号码:</label>
+				<input type="text" class="form-control" style="height: 32px;width:190px"v-model="q.contractNum" @keyup.enter="query" placeholder="身份证号码">
+				<label class="layui-form-label" style="width:6%;">登记公司:</label>
+
+				<select class="form-control input-400" v-model="q.userName" placeholder="登记公司">
+					<option value="">登记公司</option>
+				</select>
+
+				<label class="layui-form-label" style="width:6%;">登记部门:</label>
+				<select class="form-control input-400" v-model="q.userName" placeholder="登记部门">
+					<option value="">登记部门</option>
+				</select>
+				<label class="layui-form-label" style="width:6%;">手机号码:</label>
+				<input type="text" class="form-control" style="height: 32px;width:190px"v-model="q.contractNum" @keyup.enter="query" placeholder="手机号码">
+
+			</div>
+
+
+			<div class="grid-btn">
+				<label class="layui-form-label" style="width:6%;">性别:</label>
+				<select class="form-control input-400" v-model="q.userName" placeholder="性别">
+					<option value="">性别</option>
+				</select>
+				<label class="layui-form-label" style="width:6%;">登记开始时间:</label>
+				<span id="contractStartTime" class="input-append date inline-div form_datetime">
+				<input id="contractStartTimeVal" type="text" class="form-control" style="height: 32px;width:162px" placeholder="登记开始时间"/>
+				<span class="add-on" style="height: 32px;"><i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                     </span>
+			</span>
+				<label class="layui-form-label" style="width:6%;">登记结束时间:</label>
+				<span id="contractEndTime" class="input-append date inline-div form_datetime">
+				<input id="contractEndTimeVal" type="text" class="form-control" style="height: 32px;width:162px" placeholder="登记结束时间"/>
+				<span class="add-on" style="height: 32px;">
+                     <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+					</span>
+			</span>
+				<label class="layui-form-label" style="width:6%;">客户经理:</label>
+				<select class="form-control input-400" v-model="q.userName" placeholder="客户经理">
+					<option value="">客户经理</option>
+				</select>
+				<label class="layui-form-label" style="width:6%;">客户状态:</label>
+				<select class="form-control input-400" v-model="q.userName" placeholder="客户状态">
+					<option value="">客户状态</option>
+				</select>
+			</div>
+			<div class="grid-btn">
+				<label class="layui-form-label" style="width:6%;">所属省:</label>
+				<select class="form-control input-400" v-model="q.userName" placeholder="所属省">
+					<option value="">所属省</option>
+				</select>
+				<label class="layui-form-label" style="width:6%;">所属市:</label>
+				<select class="form-control input-400" v-model="q.userName" placeholder="所属市">
+					<option value="">所属市</option>
+				</select>
+				<label class="layui-form-label" style="width:6%;">所属区:</label>
+				<select class="form-control input-400" v-model="q.userName" placeholder="所属区">
+					<option value="">所属区</option>
+				</select>
+				<label class="layui-form-label" style="width:6%;">小区名称:</label>
+				<select class="form-control input-400" v-model="q.userName" placeholder="小区名称">
+					<option value="">小区名称</option>
+				</select>
+				<label class="layui-form-label" style="width:6%;">&nbsp;</label>
+				<button class="layui-btn" id="searchSubmit"  @click="query"><i class="layui-icon">&#xe615;</i>查 询</button>
+				#if($shiro.hasPermission("spbond:save"))
+				<button class="layui-btn" @click="add" type="button"><i class="layui-icon">&#xe61f;</i> 新 增</button>
+				#end
+			</div>
+		</div>
+		<div class="panel panel-default panel-div">
+			<div class="panel-heading">数据列表</div>
+			<table id="jqGrid" ></table>
+			<div id="jqGridPager"></div>
+		</div>
+    </div>
+    
+    <div v-show="!showList" class="panel panel-default">
+		<div class="panel-heading">{{title}}</div>
+		<div class="panel panel-default panel-div">
+			<div class="panel-heading">个人基本信息</div>
+			<form class="form-horizontal">
+				<div class="form-group" >
+					<div class="col-sm-1 control-label">中文姓名</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="中文姓名"/>
+					</div>
+					<div class="col-sm-1 control-label">证件类型</div>
+					<div class="col-sm-1">
+						<select class="form-control input-400" id="idType" disabled="disabled">
+							<option value="1" selected = "selected">身份证</option>
+						</select>
+					</div>
+					<div class="col-sm-1 control-label">电审姓名</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="电审姓名"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="layui-form-label" style="width:10%;margin: 0px 0px 0px 25px">出生日期</label>
+					<span id="brithDay" class="input-append date inline-div form_date">
+				<input id="brithDayVal" type="text" class="form-control" style="height: 32px; width: 162px;margin:0px 0px 0px 12px" placeholder="出生日期"/>
+				<span class="add-on" style="height: 32px;"><i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                     </span>
+			</span>
+					<label class="layui-form-label" style="width:7%;">证件有效期</label>
+					<span id="expiry" class="input-append date inline-div form_date">
+				<input id="expiryVal" type="text" class="form-control" style="height: 32px; width: 162px;margin:0px 0px 0px 3px" placeholder="证件有效期"/>
+				<span class="add-on" style="height: 32px;"><i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                     </span>
+			</span>
+					<div class="col-sm-1 control-label">年龄</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.age" placeholder="年龄"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-1 control-label">性别</div>
+					<div class="col-sm-1">
+						<select class="form-control input-400" id="" >
+							<option value="0" >男</option>
+							<option value="1" >女</option>
+						</select>
+					</div>
+					<div class="col-sm-1 control-label">婚姻情况</div>
+					<div class="col-sm-1">
+						<select class="form-control input-400" id="" >
+							<option value="0" >未婚</option>
+							<option value="1" >已婚</option>
+						</select>
+					</div>
+					<div class="col-sm-1 control-label">最高学历</div>
+					<div class="col-sm-1">
+						<select class="form-control input-400" id="" >
+							<option value="0" >未婚</option>
+							<option value="1" >已婚</option>
+							<option value="0" >未婚</option>
+							<option value="1" >已婚</option>
+							<option value="0" >未婚</option>
+							<option value="1" >已婚</option>
+						</select>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-1 control-label">民族</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="民族"/>
+					</div>
+					<div class="col-sm-1 control-label">籍贯(省市)</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="籍贯(省市)"/>
+					</div>
+					<div class="col-sm-1 control-label">手机号码</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="手机号码"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-1 control-label">居住情况</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="(自有住房,租房,其他)"/>
+					</div>
+					<div class="col-sm-1 control-label">户口所在地</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="户口所在地"/>
+					</div>
+					<div class="col-sm-1 control-label">通讯地址</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="通讯地址"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-1 control-label">个人照片</div>
+					<div class="col-sm-1">
+						<div class="upload-img">
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+		<div class="panel panel-default panel-div">
+			<div class="panel-heading">关联小区</div>
+			<form class="form-horizontal">
+				<div class="form-group">
+					<div class="col-sm-1 control-label">小区所在省</div>
+					<div class="col-sm-1">
+						<select class="form-control input-400" id="" >
+						</select>
+					</div>
+					<div class="col-sm-1 control-label">小区所在市</div>
+					<div class="col-sm-1">
+						<select class="form-control input-400" id="" >
+						</select>
+					</div>
+					<div class="col-sm-1 control-label">小区所在区</div>
+					<div class="col-sm-1">
+						<select class="form-control input-400" id="" >
+						</select>
+					</div>
+					<div class="col-sm-1 control-label">小区名称</div>
+					<div class="col-sm-1">
+						<select class="form-control input-400" id="" >
+						</select>
+					</div>
+				</div>
+
+			</form>
+		</div>
+		<div class="panel panel-default panel-div">
+			<div class="panel-heading">工作情况</div>
+			<form class="form-horizontal">
+				<div class="form-group">
+					<div class="col-sm-1 control-label">工作单位</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="工作单位"/>
+					</div>
+					<div class="col-sm-1 control-label">单位性质</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="单位性质"/>
+					</div>
+					<div class="col-sm-1 control-label">单位电话</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="单位电话"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-1 control-label">月收入</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="月收入"/>
+					</div>
+					<div class="col-sm-1 control-label">公司地址</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="公司地址"/>
+					</div>
+					<div class="col-sm-1 control-label">发薪形式</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="发薪形式"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-1 control-label">行业类别</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="行业类别"/>
+					</div>
+					<div class="col-sm-1 control-label">公司规模</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="公司规模"/>
+					</div>
+					<div class="col-sm-1 control-label">职务</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="职务"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-1 control-label">所属部门</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="所属部门"/>
+					</div>
+					<label class="layui-form-label" style="width:7%;margin: 0px 0px 0px 70px">入职时间</label>
+					<span id="" class="input-append date inline-div form_date">
+				<input id="" type="text" class="form-control" style="height: 32px; width: 162px;margin:0px 0px 0px 15px" placeholder="入职时间"/>
+				<span class="add-on" style="height: 32px;"><i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                     </span>
+			</span>
+				</div>
+			</form>
+		</div>
+		<div class="panel panel-default panel-div">
+			<div class="panel-heading">家庭经济情况</div>
+			<form class="form-horizontal">
+				<div class="form-group">
+					<div class="col-sm-1 control-label">居住情况</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="居住情况"/>
+					</div>
+					<div class="col-sm-1 control-label">是否有房产</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="是否有房产"/>
+					</div>
+					<div class="col-sm-1 control-label">是否有房贷</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="是否有房贷"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-1 control-label">社保缴存基数</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="社保缴存基数"/>
+					</div>
+					<label class="layui-form-label" style="width: 9%; margin: 0px 0px 0px 50px;">租房起租时间</label>
+					<span id="" class="input-append date inline-div form_date">
+				<input id="" type="text" class="form-control" style="height: 32px; width: 162px; margin: 0px 0px 0px 3px;" placeholder="租房起租时间"/>
+				<span class="add-on" style="height: 32px;"><i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                     </span>
+			</span>
+					<label class="layui-form-label" style="width: 7%; margin: 0px 0px 0px 0px;">来本地时间</label>
+					<span id="" class="input-append date inline-div form_date">
+				<input id="" type="text" class="form-control" style="height: 32px; width: 162px;margin:0px 0px 0px 0px" placeholder="来本地时间"/>
+				<span class="add-on" style="height: 32px;"><i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                     </span>
+			</span>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-1 control-label">公积金缴存基数</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="公积金缴存基数"/>
+					</div>
+					<div class="col-sm-1 control-label">月租金</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="月租金"/>
+					</div>
+					<div class="col-sm-1 control-label">还款方式</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="还款方式"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-1 control-label">子女数</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="子女数"/>
+					</div>
+					<div class="col-sm-1 control-label">家庭年收入</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="家庭年收入"/>
+					</div>
+					<div class="col-sm-1 control-label">其他收入</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="其他收入"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-1 control-label">其他资产</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="其他资产"/>
+					</div>
+					<div class="col-sm-1 control-label">价值</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="价值"/>
+					</div>
+				</div>
+			</form>
+		</div>
+		<div class="panel panel-default panel-div">
+			<div class="panel-heading">房产信息</div>
+			<form class="form-horizontal">
+				<div class="form-group">
+					<div class="col-sm-1 control-label">房产情况</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="房产情况"/>
+					</div>
+					<div class="col-sm-1 control-label">房产地址</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="房产地址"/>
+					</div>
+					<label class="layui-form-label" style="width: 7%; margin: 0px 0px 0px 80px;">购买时间</label>
+					<span id="" class="input-append date inline-div form_date">
+				<input id="" type="text" class="form-control" style="height: 32px; width: 162px;margin:0px 0px 0px 0px" placeholder="购买时间"/>
+				<span class="add-on" style="height: 32px;"><i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                     </span>
+			</span>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-1 control-label">购买方式</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="购买方式"/>
+					</div>
+					<div class="col-sm-1 control-label">购买价格</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="购买价格"/>
+					</div>
+					<div class="col-sm-1 control-label">月供</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="月供"/>
+					</div>
+				</div>
+			</form>
+		</div>
+		<div class="panel panel-default panel-div">
+			<div class="panel-heading">车辆信息</div>
+			<form class="form-horizontal">
+				<div class="form-group">
+					<div class="col-sm-1 control-label">所有人</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="所有人"/>
+					</div>
+					<div class="col-sm-1 control-label">车辆型号</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="车辆型号"/>
+					</div>
+					<div class="col-sm-1 control-label">裸车价</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="裸车价"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="layui-form-label" style="width: 7%; margin: 0px 0px 0px 80px;">上牌时间</label>
+					<span id="" class="input-append date inline-div form_date">
+				<input id="" type="text" class="form-control" style="height: 32px; width: 162px;margin:0px 0px 0px 5px" placeholder="上牌时间"/>
+				<span class="add-on" style="height: 32px;"><i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                     </span>
+			</span>
+					<label class="layui-form-label" style="width: 6%; margin: 0px 0px 0px 7px;">出厂日期</label>
+					<span id="" class="input-append date inline-div form_date">
+				<input id="" type="text" class="form-control" style="height: 32px; width: 162px;margin:0px 0px 0px 13px" placeholder="出厂日期"/>
+				<span class="add-on" style="height: 32px;"><i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                     </span>
+			</span>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-1 control-label">公里数</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="公里数"/>
+					</div>
+					<div class="col-sm-1 control-label">是否按揭</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="是否按揭"/>
+					</div>
+					<div class="col-sm-1 control-label">法院执行</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="是否法院执行"/>
+					</div>
+					<div class="col-sm-1 control-label">信用情况</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="信用情况"/>
+					</div>
+				</div>
+			</form>
+		</div>
+		<div class="panel panel-default panel-div">
+			<div class="panel-heading">身份证照片/扫描件</div>
+			<form class="form-horizontal">
+				<div class="form-group">
+					<div class="col-sm-1 control-label">身份证手持照片</div>
+					<div class="col-sm-1">
+						<div class="upload-img">
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-1 control-label">身份证正面</div>
+					<div class="col-sm-1">
+						<div class="upload-img">
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-1 control-label">身份证背面</div>
+					<div class="col-sm-1">
+						<div class="upload-img">
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+		<div class="panel panel-default panel-div">
+			<div class="panel-heading">旗下公司</div>
+			<form class="form-horizontal">
+				<div class="form-group">
+					<div class="col-sm-1 control-label">公司名称</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="公司名称"/>
+					</div>
+					<div class="col-sm-1 control-label">组织机构号</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="组织机构号"/>
+					</div>
+					<div class="col-sm-1 control-label">关系</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="关系"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-1 control-label">联系人</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="联系人"/>
+					</div>
+					<div class="col-sm-1 control-label">联系人电话</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="联系人电话"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-1 control-label">注册资本</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="注册资本"/>
+					</div>
+					<label class="layui-form-label" style="width: 6%; margin: 0px 0px 0px 85px;">注册时间</label>
+					<span id="" class="input-append date inline-div form_date">
+				<input id="" type="text" class="form-control" style="height: 32px; width: 162px;margin:0px 0px 0px 13px" placeholder="注册时间"/>
+				<span class="add-on" style="height: 32px;"><i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                     </span>
+			</span>
+				</div>
+			</form>
+		</div>
+		<div class="panel panel-default panel-div">
+			<div class="panel-heading">征信记录</div>
+			<form class="form-horizontal">
+				<div class="form-group">
+					<div class="col-sm-1 control-label">序号</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="序号"/>
+					</div>
+					<div class="col-sm-1 control-label" style="width:160px;margin: 0px 0px 0px 50px;">征信报告编号</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="征信报告编号"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="layui-form-label" style="width: 6%; margin: 0px 0px 0px 85px;">查询日期</label>
+					<span id="" class="input-append date inline-div form_date">
+				<input id="" type="text" class="form-control" style="height: 32px; width: 162px;margin:0px 0px 0px 13px" placeholder="查询日期"/>
+				<span class="add-on" style="height: 32px;"><i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                     </span>
+			</span>
+					<label class="layui-form-label" style="width: 8%; margin: 0px 0px 0px 8px;">报告查询日期</label>
+					<span id="" class="input-append date inline-div form_date">
+				<input id="" type="text" class="form-control" style="height: 32px; width: 162px;margin:0px 0px 0px 13px" placeholder="报告查询日期"/>
+				<span class="add-on" style="height: 32px;"><i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                     </span>
+			</span>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-1 control-label">银行信贷账户数</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="银行信贷账户数"/>
+					</div>
+					<div class="col-sm-1 control-label" style="width:160px;margin: 0px 0px 0px 50px;">银行信贷余额</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="银行信贷余额"/>
+					</div>
+				</div>
+			</form>
+		</div>
+		<div class="panel panel-default panel-div">
+			<div class="panel-heading">关系人(非配偶信息)</div>
+			<form class="form-horizontal">
+				<div class="form-group">
+					<div class="col-sm-1 control-label">姓名</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="姓名"/>
+					</div>
+					<div class="col-sm-1 control-label">关系</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="关系"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-1 control-label">电话</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="电话"/>
+					</div>
+					<div class="col-sm-1 control-label">手机</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="手机"/>
+					</div>
+				</div>
+			</form>
+		</div>
+		<div class="panel panel-default panel-div">
+			<div class="panel-heading">配偶信息</div>
+			<form class="form-horizontal">
+				<div class="form-group">
+					<div class="col-sm-1 control-label">配偶姓名</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="配偶姓名"/>
+					</div>
+					<div class="col-sm-1 control-label">证件类型</div>
+					<div class="col-sm-1">
+						<select class="form-control input-400" id="peiouIdType" disabled="disabled">
+							<option value="1" selected = "selected">身份证</option>
+						</select>
+					</div>
+					<div class="col-sm-1 control-label">证件号码</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="证件号码"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-1 control-label">学历</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="学历"/>
+					</div>
+					<div class="col-sm-1 control-label">职务</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="职务"/>
+					</div>
+					<div class="col-sm-1 control-label">政治面貌</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="政治面貌"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-1 control-label">联系电话</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="联系电话"/>
+					</div>
+					<div class="col-sm-1 control-label">工作单位</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="工作单位"/>
+					</div>
+					<div class="col-sm-1 control-label">税后收入</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="税后收入"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-1 control-label">单位性质</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="单位性质"/>
+					</div>
+					<div class="col-sm-1 control-label">单位电话</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="单位电话"/>
+					</div>
+					<div class="col-sm-1 control-label">单位地址</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="单位地址"/>
+					</div>
+				</div>
+			</form>
+		</div>
+		<div class="panel panel-default panel-div">
+			<div class="panel-heading">银行开户</div>
+			<form class="form-horizontal">
+				<div class="form-group">
+					<div class="col-sm-1 control-label">银行名称</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="银行名称"/>
+					</div>
+					<div class="col-sm-1 control-label">网点名称</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="网点名称"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-1 control-label">开户地区</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="开户地区(省市)"/>
+					</div>
+					<div class="col-sm-1 control-label">开户名称</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="开户名称"/>
+					</div>
+					<div class="col-sm-1 control-label">账号</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="账号"/>
+					</div>
+				</div>
+			</form>
+		</div>
+		<div class="panel panel-default panel-div">
+			<div class="panel-heading">负面调查</div>
+			<form class="form-horizontal">
+				<div class="form-group">
+					<label class="layui-form-label" style="width: 6%;margin: 0px 0px 0px 100px;">负面时间</label>
+					<span id="" class="input-append date inline-div form_datetime">
+				<input id="" type="text" class="form-control" style="height: 32px;width:162px" placeholder="负面时间"/>
+				<span class="add-on" style="height: 32px;">
+                     <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+					</span>
+			</span>
+					<label class="layui-form-label" style="width: 6%;margin: 0px 0px 0px 5px;">录入时间</label>
+					<span id="" class="input-append date inline-div form_datetime">
+				<input id="" type="text" class="form-control" style="height: 32px;width: 162px;margin: 0px 0px 0px 12px;" placeholder="录入时间"/>
+				<span class="add-on" style="height: 32px;">
+                     <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+					</span>
+			</span>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-1 control-label">录入人</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="录入人"/>
+					</div>
+					<div class="col-sm-1 control-label">情况说明</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="情况说明"/>
+					</div>
+				</div>
+			</form>
+		</div>
+		<div class="panel panel-default panel-div">
+			<div class="panel-heading">教育情况</div>
+			<form class="form-horizontal">
+				<div class="form-group">
+					<label class="layui-form-label" style="width: 6%;margin: 0px 0px 0px 100px;">开始时间</label>
+					<span id="" class="input-append date inline-div form_datetime">
+				<input id="" type="text" class="form-control" style="height: 32px;width:162px" placeholder="开始时间"/>
+				<span class="add-on" style="height: 32px;">
+                     <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+					</span>
+			</span>
+					<label class="layui-form-label" style="width: 6%;margin: 0px 0px 0px 5px;">结束时间</label>
+					<span id="" class="input-append date inline-div form_datetime">
+				<input id="" type="text" class="form-control" style="height: 32px;width: 162px;margin: 0px 0px 0px 12px;" placeholder="结束时间"/>
+				<span class="add-on" style="height: 32px;">
+                     <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+					</span>
+			</span>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-1 control-label">就读学校</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="就读学校"/>
+					</div>
+					<div class="col-sm-1 control-label">所获学位</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="所获学位"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-1 control-label">所获奖励</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="所获奖励"/>
+					</div>
+					<div class="col-sm-1 control-label">备注</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="备注"/>
+					</div>
+				</div>
+			</form>
+		</div>
+		<div class="panel panel-default panel-div">
+			<div class="panel-heading">业务往来</div>
+			<div class="panel panel-default panel-div">
+			<div class="panel-heading">业务往来</div>
+			<form class="form-horizontal">
+				<div class="form-group">
+					<div class="col-sm-1 control-label">产品类型</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="产品类型"/>
+					</div>
+					<div class="col-sm-1 control-label">产品品种</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="产品品种"/>
+					</div>
+					<div class="col-sm-1 control-label">办理状态</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="办理状态"/>
+					</div>
+					<div class="col-sm-1 control-label">业务名称</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="业务名称"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="layui-form-label" style="width: 9%; margin: 0px 0px 0px 50px;">进件日期</label>
+					<span id="" class="input-append date inline-div form_date">
+				<input id="" type="text" class="form-control" style="height: 32px; width: 162px; margin: 0px 0px 0px 3px;" placeholder="进件日期"/>
+				<span class="add-on" style="height: 32px;"><i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                     </span>
+			</span>
+					<label class="layui-form-label" style="width: 7%; margin: 0px 0px 0px 0px;">额度有效期</label>
+					<span id="" class="input-append date inline-div form_date">
+				<input id="" type="text" class="form-control" style="height: 32px; width: 162px;margin:0px 0px 0px 0px" placeholder="额度有效期"/>
+				<span class="add-on" style="height: 32px;"><i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                     </span>
+			</span>
+					<div class="col-sm-1 control-label">申请额度</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="申请额度"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-1 control-label">剩余额度</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="剩余额度"/>
+					</div>
+					<div class="col-sm-1 control-label">已用额度</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="已用额度"/>
+					</div>
+					<div class="col-sm-1 control-label">额度剩余有效期</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="额度剩余有效期"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-1 control-label">本金逾期</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="本金逾期"/>
+					</div>
+					<div class="col-sm-1 control-label">利息逾期</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="利息逾期"/>
+					</div>
+					<div class="col-sm-1 control-label">状态</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="状态"/>
+					</div>
+				</div>
+			</form>
+		</div>
+			<div class="panel panel-default panel-div">
+				<div class="panel-heading">信贷历史录入</div>
+				<form class="form-horizontal">
+					<div class="form-group">
+						<div class="col-sm-1 control-label">借款机构</div>
+						<div class="col-sm-1">
+							<input class="form-control input-400" v-model="q.userName" placeholder="借款机构"/>
+						</div>
+						<div class="col-sm-1 control-label">借款金额</div>
+						<div class="col-sm-1">
+							<input class="form-control input-400" v-model="q.userName" placeholder="借款金额"/>
+						</div>
+						<div class="col-sm-1 control-label">是否有逾期</div>
+						<div class="col-sm-1">
+							<input class="form-control input-400" v-model="q.userName" placeholder="是否有逾期"/>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="layui-form-label" style="width: 9%; margin: 0px 0px 0px 50px;">开始日期</label>
+						<span id="" class="input-append date inline-div form_date">
+				<input id="" type="text" class="form-control" style="height: 32px; width: 162px; margin: 0px 0px 0px 3px;" placeholder="开始日期"/>
+				<span class="add-on" style="height: 32px;"><i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                     </span>
+			</span>
+						<label class="layui-form-label" style="width: 7%; margin: 0px 0px 0px 0px;">结束日期</label>
+						<span id="" class="input-append date inline-div form_date">
+				<input id="" type="text" class="form-control" style="height: 32px; width: 162px;margin:0px 0px 0px 0px" placeholder="结束日期"/>
+				<span class="add-on" style="height: 32px;"><i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                     </span>
+			</span>
+						<div class="col-sm-1 control-label">状态</div>
+						<div class="col-sm-1">
+							<input class="form-control input-400" v-model="q.userName" placeholder="状态"/>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="panel panel-default panel-div">
+				<div class="panel-heading">目前业务</div>
+				<form class="form-horizontal">
+					<div class="form-group">
+						<div class="col-sm-1 control-label">业务名称</div>
+						<div class="col-sm-1">
+							<input class="form-control input-400" v-model="q.userName" placeholder="业务名称"/>
+						</div>
+						<div class="col-sm-1 control-label">分期金额</div>
+						<div class="col-sm-1">
+							<input class="form-control input-400" v-model="q.userName" placeholder="分期金额"/>
+						</div>
+						<div class="col-sm-1 control-label">分期数</div>
+						<div class="col-sm-1">
+							<input class="form-control input-400" v-model="q.userName" placeholder="分期数"/>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-1 control-label">已还金额</div>
+						<div class="col-sm-1">
+							<input class="form-control input-400" v-model="q.userName" placeholder="已还金额"/>
+						</div>
+						<div class="col-sm-1 control-label">未还金额</div>
+						<div class="col-sm-1">
+							<input class="form-control input-400" v-model="q.userName" placeholder="未还金额"/>
+						</div>
+						<div class="col-sm-1 control-label">状态</div>
+						<div class="col-sm-1">
+							<input class="form-control input-400" v-model="q.userName" placeholder="状态"/>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="panel panel-default panel-div">
+				<div class="panel-heading">作为第三方保证</div>
+				<form class="form-horizontal">
+					<div class="form-group">
+						<div class="col-sm-1 control-label">业务名称</div>
+						<div class="col-sm-1">
+							<input class="form-control input-400" v-model="q.userName" placeholder="业务名称"/>
+						</div>
+						<div class="col-sm-1 control-label">担保类型</div>
+						<div class="col-sm-1">
+							<input class="form-control input-400" v-model="q.userName" placeholder="担保类型"/>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-1 control-label">抵质押物类型</div>
+						<div class="col-sm-1">
+							<input class="form-control input-400" v-model="q.userName" placeholder="抵质押物类型"/>
+						</div>
+						<div class="col-sm-1 control-label">抵质押物名称</div>
+						<div class="col-sm-1">
+							<input class="form-control input-400" v-model="q.userName" placeholder="抵质押物名称"/>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-1 control-label">最终估价</div>
+						<div class="col-sm-1">
+							<input class="form-control input-400" v-model="q.userName" placeholder="最终估价"/>
+						</div>
+						<label class="layui-form-label" style="width: 9%; margin: 0px 0px 0px 50px;">登记时间</label>
+						<span id="" class="input-append date inline-div form_date">
+				<input id="" type="text" class="form-control" style="height: 32px; width: 162px; margin: 0px 0px 0px 3px;" placeholder="登记时间"/>
+				<span class="add-on" style="height: 32px;"><i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                     </span>
+			</span>
+						<div class="col-sm-1 control-label">状态</div>
+						<div class="col-sm-1">
+							<input class="form-control input-400" v-model="q.userName" placeholder="状态"/>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div class="panel panel-default panel-div">
+			<div class="panel-heading">诉讼情况</div>
+			<form class="form-horizontal">
+				<div class="form-group">
+					<label class="layui-form-label" style="width: 9%; margin: 0px 0px 0px 50px;">立案时间</label>
+					<span id="" class="input-append date inline-div form_date">
+				<input id="" type="text" class="form-control" style="height: 32px; width: 162px; margin: 0px 0px 0px 3px;" placeholder="立案时间"/>
+				<span class="add-on" style="height: 32px;"><i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                     </span>
+			</span>
+					<label class="layui-form-label" style="width: 9%; margin: 0px 0px 0px 0px;">录入时间</label>
+					<span id="" class="input-append date inline-div form_date">
+				<input id="" type="text" class="form-control" style="height: 32px; width: 162px; margin: 0px 0px 0px 3px;" placeholder="录入时间"/>
+				<span class="add-on" style="height: 32px;"><i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                     </span>
+			</span>
+					<div class="col-sm-1 control-label">立案原因</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="立案原因"/>
+					</div>
+
+				</div>
+				<div class="form-group">
+					<div class="col-sm-1 control-label">角色</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="角色"/>
+					</div>
+					<div class="col-sm-1 control-label">录入人</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="录入人"/>
+					</div>
+					<div class="col-sm-1 control-label" style="margin: 0px 0px 0px 110px">金额</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="金额"/>
+					</div>
+
+				</div>
+			</form>
+		</div>
+		<div class="panel panel-default panel-div">
+			<div class="panel-heading">评价信息</div>
+			<form class="form-horizontal">
+				<div class="form-group">
+					<div class="col-sm-1 control-label">评价信息</div>
+					<div class="col-sm-1">
+						<input class="form-control input-400" v-model="q.userName" placeholder="评价信息"/>
+					</div>
+				</div>
+			</form>
+		</div>
+		<div class="panel panel-default panel-div">
+			<div class="panel-heading">变更记录(变更内容,变更人,变更时间)</div>
+
+		</div>
+		<div class="panel panel-default panel-div">
+			<div class="panel-heading">客户经理分配记录</div>
+
+		</div>
+		<div class="panel panel-default panel-div">
+			<div class="panel-heading">调查报告</div>
+
+		</div>
+		<div class="form-group">
+			<div class="col-sm-1 control-label"></div>
+			<button class="layui-btn" type="button" @click="saveOrUpdate" >保存</button>
+			<button class="layui-btn layui-btn-warm" type="button" @click="reload" style="margin-left: 30px">返回</button>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $('.form_datetime').datetimepicker({
+            language:  'zh-CN',
+            format: 'yyyy-MM-dd hh:mm:ss',
+        });
+        $('.form_date').datetimepicker({
+            language:  'zh-CN',
+            format: 'yyyy-MM-dd',
+        });
+       /* $('#contractEndTime').datetimepicker({
+            language:  'zh-CN',
+            format: 'yyyy-MM-dd hh:mm:ss',
+        });
+        $('#brithDay').datetimepicker({
+            language:  'zh-CN',
+            format: 'yyyy-MM-dd',
+        });
+        $('#expiry').datetimepicker({
+            language:  'zh-CN',
+            format: 'yyyy-MM-dd',
+        });*/
+
+    })
+
+</script>
+<script src="${rc.contextPath}/statics/js/customer/customer.js?_${date.systemTime}"></script>
+</body>
+</html>

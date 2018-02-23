@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hxy.sys.dao.SpVillageBlackLogDao">
+
+
+    <resultMap type="com.hxy.sys.entity.SpVillageBlackLogEntity" id="spVillageBlackLogMap">
+        <result property="id" column="id"/>
+        <result property="villageId" column="village_id"/>
+        <result property="applyUserId" column="apply_user_id"/>
+        <result property="orgId" column="org_id"/>
+        <result property="blackUserId" column="black_user_id"/>
+        <result property="remark" column="remark"/>
+        <result property="state" column="state"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+		id, 
+		village_id, 
+		apply_user_id, 
+		org_id, 
+		black_user_id, 
+		remark, 
+		state, 
+		create_time
+    </sql>
+
+	<select id="queryObject" resultType="com.hxy.sys.entity.SpVillageBlackLogEntity" resultMap="spVillageBlackLogMap">
+		select
+		<include refid="Base_Column_List" />
+		from sp_village_black_log
+		where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.hxy.sys.entity.SpVillageBlackLogEntity" resultMap="spVillageBlackLogMap">
+		select
+		<include refid="Base_Column_List" />
+		from sp_village_black_log
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+    <select id="queryListByBean" resultType="com.hxy.sys.entity.SpVillageBlackLogEntity" resultMap="spVillageBlackLogMap">
+        select
+        <include refid="Base_Column_List" />
+        from sp_village_black_log
+        WHERE 1=1
+    </select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from sp_village_black_log
+	</select>
+	 
+	<insert id="save" parameterType="com.hxy.sys.entity.SpVillageBlackLogEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into sp_village_black_log
+		(
+			`village_id`, 
+			`apply_user_id`, 
+			`org_id`, 
+			`black_user_id`, 
+			`remark`, 
+			`state`, 
+			`create_time`
+		)
+		values
+		(
+			#{villageId}, 
+			#{applyUserId}, 
+			#{orgId}, 
+			#{blackUserId}, 
+			#{remark}, 
+			#{state}, 
+			#{createTime}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.hxy.sys.entity.SpVillageBlackLogEntity">
+		update sp_village_black_log 
+		<set>
+			<if test="villageId != null">`village_id` = #{villageId}, </if>
+			<if test="applyUserId != null">`apply_user_id` = #{applyUserId}, </if>
+			<if test="orgId != null">`org_id` = #{orgId}, </if>
+			<if test="blackUserId != null">`black_user_id` = #{blackUserId}, </if>
+			<if test="remark != null">`remark` = #{remark}, </if>
+			<if test="state != null">`state` = #{state}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from sp_village_black_log where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from sp_village_black_log where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

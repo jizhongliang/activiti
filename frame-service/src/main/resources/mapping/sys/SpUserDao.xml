@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hxy.sys.dao.SpUserDao">
+
+
+    <resultMap type="com.hxy.sys.entity.SpUserEntity" id="spUserMap">
+        <result property="id" column="id"/>
+        <result property="villageId" column="village_id"/>
+        <result property="name" column="name"/>
+        <result property="idNo" column="id_no"/>
+        <result property="idNoDeadline" column="id_no_deadline"/>
+        <result property="birthTime" column="birth_time"/>
+        <result property="sex" column="sex"/>
+        <result property="maritalStatus" column="marital_status"/>
+        <result property="age" column="age"/>
+        <result property="ethnic" column="ethnic"/>
+        <result property="nativePlace" column="native_place"/>
+        <result property="phone" column="phone"/>
+        <result property="education" column="education"/>
+        <result property="livingSituation" column="living_situation"/>
+        <result property="registeredResidence" column="registered_residence"/>
+        <result property="postalAddress" column="postal_address"/>
+        <result property="photo" column="photo"/>
+        <result property="idNoPhoto" column="id_no_photo"/>
+        <result property="appraiseInfo" column="appraise_info"/>
+        <result property="examineReport" column="examine_report"/>
+        <result property="defriendMsg" column="defriend_msg"/>
+        <result property="removeMsg" column="remove_msg"/>
+        <result property="defriendState" column="defriend_state"/>
+        <result property="createTiem" column="create_tiem"/>
+        <result property="status" column="status"/>
+        <result property="startTime" column="start_time"/>
+        <result property="instanceId" column="instance_id"/>
+        <result property="defid" column="defid"/>
+        <result property="startUserId" column="start_user_id"/>
+        <result property="actResult" column="act_result"/>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+		id, 
+		village_id, 
+		name, 
+		id_no, 
+		id_no_deadline, 
+		birth_time, 
+		sex, 
+		marital_status, 
+		age, 
+		ethnic, 
+		native_place, 
+		phone, 
+		education, 
+		living_situation, 
+		registered_residence, 
+		postal_address, 
+		photo, 
+		id_no_photo, 
+		appraise_info, 
+		examine_report, 
+		defriend_msg, 
+		remove_msg, 
+		defriend_state, 
+		create_tiem, 
+		status, 
+		start_time, 
+		instance_id, 
+		defid, 
+		start_user_id, 
+		act_result
+    </sql>
+
+	<select id="queryObject" resultType="com.hxy.sys.entity.SpUserEntity" resultMap="spUserMap">
+		select
+		<include refid="Base_Column_List" />
+		from sp_user
+		where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.hxy.sys.entity.SpUserEntity" resultMap="spUserMap">
+		select
+		<include refid="Base_Column_List" />
+		from sp_user
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+    <select id="queryListByBean" resultType="com.hxy.sys.entity.SpUserEntity" resultMap="spUserMap">
+        select
+        <include refid="Base_Column_List" />
+        from sp_user
+        WHERE 1=1
+    </select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from sp_user
+	</select>
+	 
+	<insert id="save" parameterType="com.hxy.sys.entity.SpUserEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into sp_user
+		(
+			`village_id`, 
+			`name`, 
+			`id_no`, 
+			`id_no_deadline`, 
+			`birth_time`, 
+			`sex`, 
+			`marital_status`, 
+			`age`, 
+			`ethnic`, 
+			`native_place`, 
+			`phone`, 
+			`education`, 
+			`living_situation`, 
+			`registered_residence`, 
+			`postal_address`, 
+			`photo`, 
+			`id_no_photo`, 
+			`appraise_info`, 
+			`examine_report`, 
+			`defriend_msg`, 
+			`remove_msg`, 
+			`defriend_state`, 
+			`create_tiem`, 
+			`status`, 
+			`start_time`, 
+			`instance_id`, 
+			`defid`, 
+			`start_user_id`, 
+			`act_result`
+		)
+		values
+		(
+			#{villageId}, 
+			#{name}, 
+			#{idNo}, 
+			#{idNoDeadline}, 
+			#{birthTime}, 
+			#{sex}, 
+			#{maritalStatus}, 
+			#{age}, 
+			#{ethnic}, 
+			#{nativePlace}, 
+			#{phone}, 
+			#{education}, 
+			#{livingSituation}, 
+			#{registeredResidence}, 
+			#{postalAddress}, 
+			#{photo}, 
+			#{idNoPhoto}, 
+			#{appraiseInfo}, 
+			#{examineReport}, 
+			#{defriendMsg}, 
+			#{removeMsg}, 
+			#{defriendState}, 
+			#{createTiem}, 
+			#{status}, 
+			#{startTime}, 
+			#{instanceId}, 
+			#{defid}, 
+			#{startUserId}, 
+			#{actResult}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.hxy.sys.entity.SpUserEntity">
+		update sp_user 
+		<set>
+			<if test="villageId != null">`village_id` = #{villageId}, </if>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="idNo != null">`id_no` = #{idNo}, </if>
+			<if test="idNoDeadline != null">`id_no_deadline` = #{idNoDeadline}, </if>
+			<if test="birthTime != null">`birth_time` = #{birthTime}, </if>
+			<if test="sex != null">`sex` = #{sex}, </if>
+			<if test="maritalStatus != null">`marital_status` = #{maritalStatus}, </if>
+			<if test="age != null">`age` = #{age}, </if>
+			<if test="ethnic != null">`ethnic` = #{ethnic}, </if>
+			<if test="nativePlace != null">`native_place` = #{nativePlace}, </if>
+			<if test="phone != null">`phone` = #{phone}, </if>
+			<if test="education != null">`education` = #{education}, </if>
+			<if test="livingSituation != null">`living_situation` = #{livingSituation}, </if>
+			<if test="registeredResidence != null">`registered_residence` = #{registeredResidence}, </if>
+			<if test="postalAddress != null">`postal_address` = #{postalAddress}, </if>
+			<if test="photo != null">`photo` = #{photo}, </if>
+			<if test="idNoPhoto != null">`id_no_photo` = #{idNoPhoto}, </if>
+			<if test="appraiseInfo != null">`appraise_info` = #{appraiseInfo}, </if>
+			<if test="examineReport != null">`examine_report` = #{examineReport}, </if>
+			<if test="defriendMsg != null">`defriend_msg` = #{defriendMsg}, </if>
+			<if test="removeMsg != null">`remove_msg` = #{removeMsg}, </if>
+			<if test="defriendState != null">`defriend_state` = #{defriendState}, </if>
+			<if test="createTiem != null">`create_tiem` = #{createTiem}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="startTime != null">`start_time` = #{startTime}, </if>
+			<if test="instanceId != null">`instance_id` = #{instanceId}, </if>
+			<if test="defid != null">`defid` = #{defid}, </if>
+			<if test="startUserId != null">`start_user_id` = #{startUserId}, </if>
+			<if test="actResult != null">`act_result` = #{actResult}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from sp_user where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from sp_user where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

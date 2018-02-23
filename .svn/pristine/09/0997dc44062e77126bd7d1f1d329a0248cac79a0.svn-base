@@ -1,0 +1,17 @@
+#url=jdbc:mysql://rm-bp1283z6s86cijt5d5o.mysql.rds.aliyuncs.com:3306/hxyframe?useUnicode=true&characterEncoding=utf-8&autoReconnect=true
+url=jdbc:mysql://xinqiandai.mysql.rds.aliyuncs.com:3306/loan?useUnicode=true&characterEncoding=utf-8&autoReconnect=true
+#url=jdbc:mysql://127.0.0.1:3306/hxyFrame_test?useUnicode=true&characterEncoding=utf-8&autoReconnect=true
+#username=loan
+username=hwccaiwei
+#password=1qaz@WSX
+password=@2017Caiwei
+#\u5B9A\u4E49\u521D\u59CB\u8FDE\u63A5\u6570
+initialSize=0
+#\u5B9A\u4E49\u6700\u5927\u8FDE\u63A5\u6570
+maxActive=20
+#\u5B9A\u4E49\u6700\u5C0F\u7A7A\u95F2
+minIdle=1
+#\u5B9A\u4E49\u6700\u957F\u7B49\u5F85\u65F6\u95F4
+maxWait=60000
+
+validationQuery=SELECT 1 

@@ -1,0 +1,17 @@
+/Users/jizhongliang/workdir/workspaceIJ/misFrame/frame-app/src/main/java/com/hxy/app/controller/ApiTestController.java
+/Users/jizhongliang/workdir/workspaceIJ/misFrame/frame-app/src/main/java/com/hxy/app/annotation/LoginRequired.java
+/Users/jizhongliang/workdir/workspaceIJ/misFrame/frame-app/src/main/java/com/hxy/app/entity/ApiUserEntity.java
+/Users/jizhongliang/workdir/workspaceIJ/misFrame/frame-app/src/main/java/com/hxy/app/service/ApiNoticeService.java
+/Users/jizhongliang/workdir/workspaceIJ/misFrame/frame-app/src/main/java/com/hxy/app/service/ApiUserService.java
+/Users/jizhongliang/workdir/workspaceIJ/misFrame/frame-app/src/main/java/com/hxy/app/service/impl/ApiActivitiServiceImpl.java
+/Users/jizhongliang/workdir/workspaceIJ/misFrame/frame-app/src/main/java/com/hxy/app/service/ApiActivitiService.java
+/Users/jizhongliang/workdir/workspaceIJ/misFrame/frame-app/src/main/java/com/hxy/app/controller/ApiLoginController.java
+/Users/jizhongliang/workdir/workspaceIJ/misFrame/frame-app/src/main/java/com/hxy/app/controller/ApiUserController.java
+/Users/jizhongliang/workdir/workspaceIJ/misFrame/frame-app/src/main/java/com/hxy/app/dao/ApiUserDao.java
+/Users/jizhongliang/workdir/workspaceIJ/misFrame/frame-app/src/main/java/com/hxy/app/service/impl/ApiNoticeServiceImpl.java
+/Users/jizhongliang/workdir/workspaceIJ/misFrame/frame-app/src/main/java/com/hxy/app/utils/JwtUtils.java
+/Users/jizhongliang/workdir/workspaceIJ/misFrame/frame-app/src/main/java/com/hxy/app/resolver/LoginUserHandlerMethodArgumentResolver.java
+/Users/jizhongliang/workdir/workspaceIJ/misFrame/frame-app/src/main/java/com/hxy/app/controller/ApiActivitiController.java
+/Users/jizhongliang/workdir/workspaceIJ/misFrame/frame-app/src/main/java/com/hxy/app/service/impl/ApiUserServiceImpl.java
+/Users/jizhongliang/workdir/workspaceIJ/misFrame/frame-app/src/main/java/com/hxy/app/interceptor/AuthorizationInterceptor.java
+/Users/jizhongliang/workdir/workspaceIJ/misFrame/frame-app/src/main/java/com/hxy/app/annotation/CurrentUser.java

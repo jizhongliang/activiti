@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>新建额度审批信息</title>
+    #parse("sys/header.html")
+
+    <link rel="stylesheet" href="${rc.contextPath}/statics/plugins/bootstrap-datetimepicker-0.0.11/css/bootstrap-combined.min.css">
+    <style type="text/css">
+
+
+        .panel-div{
+            margin: 20px 10px;
+        }
+
+        .inline-div{
+            display: inline-block;
+        }
+
+
+        .form-horizontal{
+            width: 100%;
+        }
+
+        .form-horizontal .col-sm-2{
+            width: 180px;
+        }
+
+
+        .form-horizontal .col-sm-10 .input-400{
+            width: 400px;
+        }
+
+
+        .form-control{
+            display: inline-flex;
+        }
+
+        .upload-img{
+            width: 180px;
+            height: 140px;
+            background: url("${rc.contextPath}/statics/images/camera.png");
+            background-repeat:no-repeat;
+            background-size:180px 140px;
+            cursor: pointer;
+        }
+        
+        .div-height-90{
+            height: 140px;
+            line-height: 140px;
+            vertical-align: middle;
+        }
+
+        .list-bz-div{
+            position: relative;
+            display: -webkit-box; /* Chrome 4+, Safari 3.1, iOS Safari 3.2+ */
+            display: -moz-box; /* Firefox 17- */
+            display: -webkit-flex; /* Chrome 21+, Safari 6.1+, iOS Safari 7+, Opera 15/16 */
+            display: -moz-flex; /* Firefox 18+ */
+            display: -ms-flexbox; /* IE 10 */
+            display: flex; /* Chrome 29+, Firefox 22+, IE 11+, Opera 12.1/17/18, Android 4.4+ */
+            /*align-items:center;垂直居中*/
+        }
+
+        .list-bz-div .delButton{
+            position: absolute;
+            right: 5px;
+            top: 5px;
+        }
+         #idImg img{
+         margin-right:15px;
+         }
+        .list-bz-div .list-bz-label{
+            width: 100px;
+            border-right: 1px solid #dddddd;
+            text-align: center;
+            align-items:center;
+            display: -webkit-box; /* Chrome 4+, Safari 3.1, iOS Safari 3.2+ */
+            display: -moz-box; /* Firefox 17- */
+            display: -webkit-flex; /* Chrome 21+, Safari 6.1+, iOS Safari 7+, Opera 15/16 */
+            display: -moz-flex; /* Firefox 18+ */
+            display: -ms-flexbox; /* IE 10 */
+            display: flex; /* Chrome 29+, Firefox 22+, IE 11+, Opera 12.1/17/18, Android 4.4+ */
+            justify-content: center;
+        }
+
+        .upload-img-div{
+            display: -webkit-box; /* Chrome 4+, Safari 3.1, iOS Safari 3.2+ */
+            display: -moz-box; /* Firefox 17- */
+            display: -webkit-flex; /* Chrome 21+, Safari 6.1+, iOS Safari 7+, Opera 15/16 */
+            display: -moz-flex; /* Firefox 18+ */
+            display: -ms-flexbox; /* IE 10 */
+            display: flex; /* Chrome 29+, Firefox 22+, IE 11+, Opera 12.1/17/18, Android 4.4+ */
+        }
+
+        .upload-img-div .upload-img-list{
+            width: 185px;
+            height: 170px;
+            overflow: hidden;
+            margin: 0px 20px 20px 0px;
+            border: 1px solid #dddddd;
+            border-radius: 5px;
+        }
+
+
+        .upload-img-div .upload-img-list .image_div{
+            width: 185px;
+            height: 140px;
+            overflow: hidden;
+            border-bottom: 1px solid #dddddd;
+            text-align: center;
+            padding: 5px;
+            background-color: #FAFAFA;
+        }
+
+
+        .upload-img-div .upload-img-list .image_div .image{
+            height: 130px;
+            overflow: hidden;
+        }
+
+        .upload-img-div .no-border{
+            border: none !important;
+        }
+
+        .upload-img-div .upload-img-list .image-handle{
+            width: 185px;
+            height: 45px;
+            text-align: right;
+            padding-right: 20px;
+            padding-top: 3px;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div id="rrapp">
+
+        <div v-show="!showList" class="panel panel-default">
+            <div class="panel-heading">新建额度审批信息</div>
+            <div class="panel panel-default panel-div">
+                <div class="panel-heading">客户基本信息</div>
+                <form class="form-horizontal">
+
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">姓名</div>
+                        <div class="col-sm-10">
+                            <input class="form-control input-400"   placeholder="请选择客户，姓名自动显示" disabled="false" id="name"/>
+                            <button type="button" class="layui-btn" id="selectUserBtn"><i class="layui-icon">&#xe615;</i>选 择</button>
+                        </div>
+                    </div>
+            
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">手机号</div>
+                        <div class="col-sm-10">
+                            <input class="form-control input-400" v-model="user.userName"  placeholder="请选择客户，手机号自动显示" disabled="false" id="phone"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">身份证号</div>
+                        <div class="col-sm-10">
+                            <input class="form-control input-400" v-model="user.userName"  placeholder="请选择客户，身份证号自动显示" disabled="false" id="idNo"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label div-height-90">身份证正反面（多张）</div>
+                        <div class="col-sm-10" id="idImg">
+                            <!-- <div class="upload-img">
+
+                            </div> -->
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+
+            <div class="panel panel-default panel-div">
+                <div class="panel-heading">小区信息</div>
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">小区位置</div>
+                        <div class="col-sm-10">
+                            <div class="inline-div">
+                             <input class="form-control input-400" v-model="user.userName"  placeholder="请选择客户，省份自动显示" disabled="false" id="provinceSelect"/>
+                                <!-- <select id="provinceSelect" onChange="changeProvince()" class="form-control input-400"  placeholder="请选择省份">
+                                    <option value="">请选择省份</option>
+                                </select> -->
+                            </div>
+
+                            <div class="inline-div">
+                             <input class="form-control input-400" v-model="user.userName"  placeholder="请选择客户，城市自动显示" disabled="false" id="citySelect"/>
+                                <!-- <select id="citySelect" class="form-control input-400"  placeholder="请选择城市">
+                                    <option value="">请选择城市</option>
+                                </select> -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">小区名称</div>
+                        <div class="col-sm-10">
+                        <input class="form-control input-400" v-model="user.userName"  placeholder="请选择客户，小区名称自动显示" disabled="false" id="vname"/>
+                            <!-- <select class="form-control input-400" v-model="user.userName" placeholder="请选择项目">
+                                <option value="">请选择项目</option>
+                            </select> -->
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+
+
+            <div class="panel panel-default panel-div">
+                <div class="panel-heading">额度信息</div>
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">申请额度</div>
+                        <div class="col-sm-10">
+                            <input class="form-control input-400" maxlength="9" v-model="user.userName" placeholder="请输入申请的额度"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">日利率</div>
+                        <div class="col-sm-10">
+                            <input class="form-control input-400" maxlength="6" v-model="user.userName" placeholder="请输入日利率"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">申请有效时间</div>
+                        <div class="col-sm-10">
+
+                            <div id="datetimepicker1" class="input-append date inline-div">
+                                <input type="text" class="input-400" style="height: 32px;" placeholder="请选择开始时间"/>
+                                <span class="add-on" style="height: 32px;">
+                                    <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                                </span>
+                            </div>
+                            <div class="inline-div">至</div>
+                            <div id="datetimepicker2" class="input-append date inline-div">
+                                <input type="text" class="input-400" style="height: 32px;" placeholder="请选择结束时间"/>
+                                <span class="add-on" style="height: 32px;">
+                                    <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="panel panel-default panel-div">
+                <div class="panel-heading">业务信息</div>
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">业务类型</div>
+                        <div class="col-sm-10">
+                            <select id="creditServiceType" class="form-control input-400" v-model="user.userName" placeholder="请选择业务类型">
+                                <option value="">请选择业务类型</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">业务品种</div>
+                        <div class="col-sm-10">
+                            <select id="creditServiceVariety" class="form-control input-400" v-model="user.userName" placeholder="请选择业务类型">
+                                <option value="">请选择业务品种</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+
+            <div class="panel panel-default panel-div">
+                <div class="panel-heading">申报材料信息</div>
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label div-height-90">融资租赁申请书</div>
+                        <div class="col-sm-10">
+                            <div class="upload-img-div">
+                                <div class="upload-img upload-img-list no-border" id="fileType0">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label div-height-90">基本资料文件</div>
+                        <div class="col-sm-10">
+                            <div class="upload-img-div">
+                                <div class="upload-img upload-img-list no-border" id="fileType1">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label div-height-90">征信材料</div>
+                        <div class="col-sm-10">
+                            <div class="upload-img-div">
+                                <div class="upload-img upload-img-list no-border" id="fileType2">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label div-height-90">权属证明</div>
+                        <div class="col-sm-10">
+                            <div class="upload-img-div">
+                                <div class="upload-img upload-img-list no-border" id="fileType3">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label div-height-90">客户个人调查报告</div>
+                        <div class="col-sm-10">
+                            <div class="upload-img-div">
+                                <div class="upload-img upload-img-list no-border" id="fileType4">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+
+
+            <div class="panel panel-default panel-div">
+                <div class="panel-heading">担保物信息</div>
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">车位面积</div>
+                        <div class="col-sm-10">
+                            <input class="form-control input-400" v-model="user.userName" placeholder="请输入车位面积"/>&nbsp;&nbsp;㎡
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">车位价格</div>
+                        <div class="col-sm-10">
+                            <input class="form-control input-400" v-model="user.userName" placeholder="请输入车位价格"/>&nbsp;&nbsp;元
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">是否有证</div>
+                        <div class="col-sm-10">
+                            <select class="form-control input-400" v-model="user.userName" placeholder="请选择是否有证">
+                                <option value="">请选择是否有证</option>
+                                <option value="0">无证</option>
+                                <option value="1">有证</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">车位号</div>
+                        <div class="col-sm-10">
+                            <input class="form-control input-400" v-model="user.userName" placeholder="请输入车位号"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label div-height-90">车位文件</div>
+                        <div class="col-sm-10">
+                            <div class="upload-img-div">
+                                <div class="upload-img upload-img-list no-border" id="fileType5">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">房产证号</div>
+                        <div class="col-sm-10">
+                            <input class="form-control input-400" v-model="user.userName" placeholder="请输入房产证号"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label div-height-90">房产证</div>
+                        <div class="col-sm-10">
+                            <div class="upload-img-div">
+                                <div class="upload-img upload-img-list no-border" id="fileType6">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">土地证号</div>
+                        <div class="col-sm-10">
+                            <input class="form-control input-400" v-model="user.userName" placeholder="请输入土地证号"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label div-height-90">土地证</div>
+                        <div class="col-sm-10">
+                            <div class="upload-img-div">
+                                <div class="upload-img upload-img-list no-border" id="fileType7">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">不动产证号</div>
+                        <div class="col-sm-10">
+                            <input class="form-control input-400" v-model="user.userName" placeholder="请输入不动产证号"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label div-height-90">不动产证</div>
+                        <div class="col-sm-10">
+                            <div class="upload-img-div">
+                                <div class="upload-img upload-img-list no-border" id="fileType8">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+
+            <div class="panel panel-default panel-div">
+                <div class="panel-heading">保证人信息</div>
+                <form class="form-horizontal" style="padding-top: 0px;">
+
+                    <div class="list-bz-div">
+                        <div class="delButton" style="display: none;"><button class="layui-btn layui-btn-danger" type="button" ><i class="layui-icon">&#xe640;</i>删除</button></div>
+                        <div class="list-bz-label">
+                            <div>
+                                保证人1
+                            </div>
+                        </div>
+                        <div style="width: 900px;padding: 30px 0px;">
+                            <div class="form-group">
+                                <div class="col-sm-2 control-label">保证人姓名</div>
+                                <div class="col-sm-10">
+                                    <input class="form-control input-400" v-model="user.userName" placeholder="请输入保证人姓名"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-2 control-label">手机号码</div>
+                                <div class="col-sm-10">
+                                    <input class="form-control input-400" v-model="user.userName" placeholder="请输入手机号码"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-2 control-label">身份证号</div>
+                                <div class="col-sm-10">
+                                    <input class="form-control input-400" v-model="user.userName" placeholder="请输入身份证号"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-2 control-label div-height-90">身份证正反面</div>
+                                <div class="col-sm-10">
+                                    <div class="upload-img-div">
+                                        <div class="upload-img upload-img-list no-border" id="idenImg0">
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="list-bz-div" style="border-top: 1px solid #dddddd;display: none;">
+                        <div class="delButton"><button class="layui-btn layui-btn-danger" type="button" ><i class="layui-icon">&#xe640;</i>删除</button></div>
+                        <div class="list-bz-label">
+                            <div>
+                                保证人2
+                            </div>
+                        </div>
+                        <div style="width: 900px;padding: 30px 0px;">
+                            <div class="form-group">
+                                <div class="col-sm-2 control-label">保证人姓名</div>
+                                <div class="col-sm-10">
+                                    <input class="form-control input-400" v-model="user.userName" placeholder="请输入保证人姓名"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-2 control-label">手机号码</div>
+                                <div class="col-sm-10">
+                                    <input class="form-control input-400" v-model="user.userName" placeholder="请输入手机号码"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-2 control-label">身份证号</div>
+                                <div class="col-sm-10">
+                                    <input class="form-control input-400" v-model="user.userName" placeholder="请输入身份证号"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-2 control-label div-height-90">身份证正反面</div>
+                                <div class="col-sm-10">
+                                    <div class="upload-img-div">
+                                        <div class="upload-img upload-img-list no-border" id="idenImg1">
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="list-bz-div" style="border-top: 1px solid #dddddd;display: none;">
+                        <div class="delButton"><button class="layui-btn layui-btn-danger" type="button" ><i class="layui-icon">&#xe640;</i>删除</button></div>
+                        <div class="list-bz-label">
+                            <div>
+                                保证人3
+                            </div>
+                        </div>
+                        <div style="width: 900px;padding: 30px 0px;">
+                            <div class="form-group">
+                                <div class="col-sm-2 control-label">保证人姓名</div>
+                                <div class="col-sm-10">
+                                    <input class="form-control input-400" v-model="user.userName" placeholder="请输入保证人姓名"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-2 control-label">手机号码</div>
+                                <div class="col-sm-10">
+                                    <input class="form-control input-400" v-model="user.userName" placeholder="请输入手机号码"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-2 control-label">身份证号</div>
+                                <div class="col-sm-10">
+                                    <input class="form-control input-400" v-model="user.userName" placeholder="请输入身份证号"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-2 control-label div-height-90">身份证正反面</div>
+                                <div class="col-sm-10">
+                                    <div class="upload-img-div">
+                                        <div class="upload-img upload-img-list no-border" id="idenImg2">
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="list-bz-div" style="border-top: 1px solid #dddddd;display: none;">
+                        <div class="delButton"><button class="layui-btn layui-btn-danger" type="button" ><i class="layui-icon">&#xe640;</i>删除</button></div>
+                        <div class="list-bz-label">
+                            <div>
+                                保证人4
+                            </div>
+                        </div>
+                        <div style="width: 900px;padding: 30px 0px;">
+                            <div class="form-group">
+                                <div class="col-sm-2 control-label">保证人姓名</div>
+                                <div class="col-sm-10">
+                                    <input class="form-control input-400" v-model="user.userName" placeholder="请输入保证人姓名"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-2 control-label">手机号码</div>
+                                <div class="col-sm-10">
+                                    <input class="form-control input-400" v-model="user.userName" placeholder="请输入手机号码"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-2 control-label">身份证号</div>
+                                <div class="col-sm-10">
+                                    <input class="form-control input-400" v-model="user.userName" placeholder="请输入身份证号"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-2 control-label div-height-90">身份证正反面</div>
+                                <div class="col-sm-10">
+                                    <div class="upload-img-div">
+                                        <div class="upload-img upload-img-list no-border" id="idenImg3">
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="list-bz-div" style="border-top: 1px solid #dddddd;display: none;">
+                        <div class="delButton"><button class="layui-btn layui-btn-danger" type="button" ><i class="layui-icon">&#xe640;</i>删除</button></div>
+                        <div class="list-bz-label">
+                            <div>
+                                保证人5
+                            </div>
+                        </div>
+                        <div style="width: 900px;padding: 30px 0px;">
+                            <div class="form-group">
+                                <div class="col-sm-2 control-label">保证人姓名</div>
+                                <div class="col-sm-10">
+                                    <input class="form-control input-400" v-model="user.userName" placeholder="请输入保证人姓名"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-2 control-label">手机号码</div>
+                                <div class="col-sm-10">
+                                    <input class="form-control input-400" v-model="user.userName" placeholder="请输入手机号码"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-2 control-label">身份证号</div>
+                                <div class="col-sm-10">
+                                    <input class="form-control input-400" v-model="user.userName" placeholder="请输入身份证号"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-2 control-label div-height-90">身份证正反面</div>
+                                <div class="col-sm-10">
+                                    <div class="upload-img-div">
+                                        <div class="upload-img upload-img-list no-border" id="idenImg4">
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="text-align: center;border-top: 1px solid #dddddd;padding-top: 20px;font-size: 20px;cursor: pointer">
+                        <div id="addGuarantor">+&nbsp;添加保证人信息</div>
+                    </div>
+                </form>
+            </div>
+
+
+            <div class="panel panel-default panel-div">
+                <div class="panel-heading">合同号信息</div>
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">合同号</div>
+                        <div class="col-sm-10">
+                            <input class="form-control input-400" v-model="user.userName" placeholder="请输入订单号" id="hth" disabled="false"/>
+                            <button type="button" class="layui-btn" id="submitBtn" ><i class="layui-icon">&#xe642;</i>系统生成</button>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div style="text-align: center;margin-bottom: 20px;">
+                <button type="button" class="layui-btn" id="saveBtn" >保存</button>
+                <button class="layui-btn layui-btn-warm" id="backBtn" >返回</button>
+            </div>
+        </div>
+
+    </div>
+    <script src="${rc.contextPath}/statics/js/credit/addApproval.js?_${date.systemTime}"></script>
+    <script src="${rc.contextPath}/statics/plugins/plupload-2.1.2/js/plupload.full.min.js" type="text/javascript" charset="utf-8"></script>
+</body>
+</html>

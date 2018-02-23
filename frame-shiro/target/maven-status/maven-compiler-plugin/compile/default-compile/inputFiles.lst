@@ -1,0 +1,10 @@
+/Users/jizhongliang/workdir/workspaceIJ/misFrame/frame-shiro/src/main/java/com/hxy/shiro/realm/MyRealm.java
+/Users/jizhongliang/workdir/workspaceIJ/misFrame/frame-shiro/src/main/java/com/hxy/shiro/filter/RememberAuthenticationFilter.java
+/Users/jizhongliang/workdir/workspaceIJ/misFrame/frame-shiro/src/main/java/com/hxy/shiro/utils/VelocityShiro.java
+/Users/jizhongliang/workdir/workspaceIJ/misFrame/frame-shiro/src/main/java/com/hxy/shiro/filter/SingleSignOutFilter.java
+/Users/jizhongliang/workdir/workspaceIJ/misFrame/frame-shiro/src/main/java/com/hxy/shiro/quartzSession/QuartzSessionValidationJob.java
+/Users/jizhongliang/workdir/workspaceIJ/misFrame/frame-shiro/src/main/java/com/hxy/shiro/realm/MyCasRealm.java
+/Users/jizhongliang/workdir/workspaceIJ/misFrame/frame-shiro/src/main/java/com/hxy/shiro/quartzSession/QuartzSessionValidationScheduler.java
+/Users/jizhongliang/workdir/workspaceIJ/misFrame/frame-shiro/src/main/java/com/hxy/shiro/redisSession/ShiroSessionListener.java
+/Users/jizhongliang/workdir/workspaceIJ/misFrame/frame-shiro/src/main/java/com/hxy/shiro/filter/UserAuthorizationFilter.java
+/Users/jizhongliang/workdir/workspaceIJ/misFrame/frame-shiro/src/main/java/com/hxy/shiro/redisSession/CachingShiroSessionDao.java

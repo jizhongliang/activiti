@@ -1,0 +1,9 @@
+org/jasig/services/persondir/support/BlogStubPersonAttributeDao.class
+org/jasig/cas/authentication/User.class
+org/jasig/cas/authentication/UserDaoJdbc.class
+org/jasig/cas/utils/MD5.class
+org/jasig/cas/authentication/UsernamePasswordCaptchaCredential.class
+org/jasig/cas/authentication/UserRowMapper.class
+org/jasig/cas/utils/ShiroUtils.class
+org/jasig/cas/web/flow/CnBlogAuthenticationViaFormAction.class
+org/jasig/cas/authentication/UserAuthenticationHandler.class
